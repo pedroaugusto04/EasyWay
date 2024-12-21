@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "183000530280",
+    "project_id": "vanapp-86ca7",
+    "storage_bucket": "vanapp-86ca7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:183000530280:android:462ee0e9a3813fc8b96add",
+        "android_client_info": {
+          "package_name": "com.vanapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyByOq8KJzcFT_avL6oWK30oVIvKwWTZqDs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
