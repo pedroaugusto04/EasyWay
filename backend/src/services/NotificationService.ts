@@ -10,7 +10,7 @@ export class NotificationService {
 
   public static async sendNotification(deviceToken: string): Promise<void> {
     const message: admin.messaging.Message = {
-      data: {
+      notification: {
         title: process.env.NOTIFICATION_MSG_TITLE || "",
         body: process.env.NOTIFICATION_MSG_BODY || "",
       },

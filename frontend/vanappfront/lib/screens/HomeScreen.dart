@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({Key? key}) : super(key: key);
+
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: const Text(
-          'Bem-vindo à Tela Inicial!',
-          style: TextStyle(fontSize: 24),
-        ),
+      body: const Center(
+        child: Text('Bem vindo à Tela Inicial!'),
       ),
     );
   }
