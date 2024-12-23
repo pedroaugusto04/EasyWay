@@ -4,8 +4,6 @@ import { authenticateMiddleware } from "../middlewares/authMiddleware";
 
 const deviceTokenRouter = Router();
 
-deviceTokenRouter.use(authenticateMiddleware);
-
-deviceTokenRouter.post("/deviceToken",DeviceTokenController.saveDeviceToken);
+deviceTokenRouter.post("/",DeviceTokenController.saveDeviceToken);
 
 export {deviceTokenRouter}

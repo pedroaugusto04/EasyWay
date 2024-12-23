@@ -1,15 +1,23 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import '../Exceptions/AuthenticationException.dart';
+import 'LoginService.dart';
+
 class DeviceTokenService {
 
-  static Future<void> saveDeviceToken(String userId,
-      String? deviceToken) async {
+  static Future<void> saveDeviceToken(String? jwtToken, String? deviceToken) async {
     try {
+      if (jwtToken == null || LoginService.isTokenExpired(jwtToken)) {
+        throw AuthenticationException();
+      }
+      if (deviceToken == null) {
+        throw ArgumentError('deviceToken não pode ser nulo');
+      }
+
       final url = Uri.parse('http://192.168.1.10:3000/deviceToken');
 
       final body = json.encode({
-        'userId': userId,
         'deviceToken': deviceToken,
       });
 
@@ -17,6 +25,7 @@ class DeviceTokenService {
         url,
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': jwtToken,
         },
         body: body,
       );

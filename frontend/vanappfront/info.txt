@@ -1,0 +1,3 @@
+Consideracoes para desenvolvimento:
+
+Ao manipular rotas, utilizar NavigationService ( encapsula a lógica de verificação de sessão / redirecionamento para login )

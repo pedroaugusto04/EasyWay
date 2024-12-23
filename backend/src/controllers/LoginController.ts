@@ -1,6 +1,9 @@
 import dotenv from "dotenv";
 import { Request, Response } from 'express';
 import { LoginService } from "../services/LoginService";
+import { comparePasswords } from "../utils/bcrypt";
+import { User } from "../models/User";
+import { generateToken } from "../utils/jwtAuth";
 
 dotenv.config();
 
@@ -10,21 +13,22 @@ export class LoginController {
     try {
       const { email, password } = req.body;
 
-      const user = await LoginService.login(email);
+      const user: User|null = await LoginService.login(email);
 
-      /*
       if (user) {
         const isAValidPassword = await comparePasswords(password, user.password);
         if (isAValidPassword) {
-          const { password,isGoogleLogin,createdAt,updatedAt, ...dtoUser } = user;
-          const token = generateToken(dtoUser);
-          return res.status(200).json({ message: "Login bem-sucedido.", dtoUser, token });
-        }
-      }*/
+          const { password, ...dtoUser } = user;
+          const jwtToken = generateToken(dtoUser);
 
+          res.status(200).json({ message: "Login bem-sucedido.", dtoUser, jwtToken });
+          return;
+        } 
+      }
+      
       res.status(401).send("Credenciais inválidas.");
     } catch (error) {
-      console.error("Erro na rota /login:", error);
+      console.error("Erro ao logar:", error);
       res.status(500).send("Erro inesperado eu realizar login.");
     }
   }

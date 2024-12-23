@@ -3,7 +3,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:vanappfront/screens/NavigationScreen.dart';
-
+import 'package:vanappfront/services/LoginService.dart';
+import 'package:vanappfront/services/NavigationService.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -46,7 +47,11 @@ Future<void> main() async {
     }
   });
 
-  runApp(const MyApp());
+  if (await LoginService.isUserLoggedIn()){
+    runApp(const MyAppLoggedIn());
+  } else {
+    runApp(const MyApp());
+  }
 }
 
 
@@ -72,6 +77,33 @@ class MyApp extends StatelessWidget {
       home: const LoginScreen(),
     );
   }
+
+}
+
+// caso a sessao do usuario esteja ativa
+class MyAppLoggedIn extends StatelessWidget {
+  const MyAppLoggedIn({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'VanApp',
+      theme: ThemeData(
+        colorScheme: const ColorScheme.light(
+          primary: Color(0xFF007BFF),
+          onPrimary: Colors.white,
+          secondary: Color(0xFF007BFF),
+          onSecondary: Colors.white,
+        ),
+        useMaterial3: true,
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.grey[300],
+        ),
+      ),
+      home: const NavigationScreen(),
+    );
+  }
+
 }
 
 class LoginScreen extends StatefulWidget {
@@ -84,6 +116,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final NavigationService _navigationService = NavigationService();
 
   Future<void> _login() async {
     String email = _emailController.text;
@@ -92,10 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
     bool isAuthenticated = await authenticateUser(email, password);
 
     if (isAuthenticated) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const NavigationScreen()),
-      );
+      _navigationService.navigateTo(NavigationScreen(),context);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Credenciais inválidas')),
@@ -104,7 +134,13 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<bool> authenticateUser(String email, String password) async {
-    return email == 'a' && password == 'b';
+    try {
+      await LoginService.login(email, password);
+      return true;
+    } catch (e) {
+      print("Erro ao autenticar: $e");
+    }
+    return false;
   }
 
   @override
