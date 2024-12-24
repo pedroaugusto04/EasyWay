@@ -102,7 +102,6 @@ class UserService {
 
       final responseData = json.decode(response.body);
       final isDriver = responseData["isDriver"] ?? false;
-
       return isDriver;
 
     } catch (e) {

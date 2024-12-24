@@ -24,6 +24,37 @@ class _RoutesScreenState extends State<RoutesScreen> {
     _routesFuture = RoutesService.getRoutes();
   }
 
+  Future<bool> _confirmRemoveRoute(RouteModel route) async {
+    bool? result = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirmar remoção'),
+          content: Text('Tem certeza de que deseja remover a rota "${route.name}"?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () async {
+                await RoutesService.deleteRoute(route.id);
+                Navigator.of(context).pop(true);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Rota ${route.name} excluída!')),
+                );
+              },
+              child: const Text('Excluir'),
+            ),
+          ],
+        );
+      },
+    );
+    return result ?? false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,14 +92,41 @@ class _RoutesScreenState extends State<RoutesScreen> {
                         subtitle: Text(
                           'Origem: ${route.origin}\nDestino: ${route.destination}',
                         ),
-                        trailing: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => RouteDetailsScreen(route: route)),
-                            );
-                          },
-                          child: const Text('Detalhes'),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min, // Garantir que os botões não ocupem espaço extra
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => RouteDetailsScreen(route: route)),
+                                );
+                              },
+                              child: const Text('Detalhes'),
+                            ),
+                            const SizedBox(width: 8.0),
+                            ElevatedButton(
+                              onPressed: () async {
+                                bool isDeleted = await _confirmRemoveRoute(route);
+                                if (isDeleted) {
+                                  setState(() {
+                                    routes.remove(route);
+                                  });
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                                foregroundColor: Colors.white,
+                                shape: CircleBorder(),
+                              ),
+                              child: Icon(
+                                Icons.delete,
+                                color: Colors.white,
+                                size: 18.0,
+                              ),
+                            ),
+                          ],
+
                         ),
                       ),
                     );

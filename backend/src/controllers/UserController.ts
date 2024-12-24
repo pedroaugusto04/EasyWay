@@ -61,7 +61,7 @@ export class UserController {
             const userId = getUserIdByToken(token);
 
             const isDriver: boolean = await UserService.verifyIsDriver(userId);
-            
+
             res.status(200).json({ isDriver });
         } catch(error){
             console.error("Erro ao verificar se o usuario eh um motorista ativo:",error);
@@ -84,8 +84,8 @@ export class UserController {
             
             res.status(200).send("Sucesso ao deletar usuário da rota");
         } catch(error){
-            console.error("Erro ao verificar se o usuario eh um motorista ativo:",error);
-            res.status(500).send("Erro interno ao verificar se o usuario eh um motorista ativo!");
+            console.error("Erro ao deletar usuario da rota:",error);
+            res.status(500).send("Erro interno ao deletar usuario da rota");
         }
     }
 
@@ -106,7 +106,7 @@ export class UserController {
             }
 
             const deviceToken = await UserService.getUserDeviceToken(userId);
-            
+
             res.status(200).json({
                 deviceToken: deviceToken,
             });

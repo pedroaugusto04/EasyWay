@@ -47,11 +47,14 @@ export class UserService {
     // verifica se o usuario eh um motorista ativo
     try {
       const sqlStatement = `
-        SELECT EXISTS (
-          SELECT 1
-          FROM Drivers WHERE user_id = $1
-        );
-      `;
+      SELECT EXISTS (
+        SELECT 1
+        FROM Drivers
+        JOIN Users ON Users.id = Drivers.user_id
+        WHERE Drivers.user_id = $1
+        AND Drivers.is_active = true
+        AND Users.is_driver = true
+      );`;
 
       const res = await client.query(sqlStatement, [userId]);
       return res.rows[0].exists;  

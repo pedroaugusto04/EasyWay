@@ -106,4 +106,22 @@ export class RoutesService {
       client.release(); 
     }
   }
+
+  public static async deleteRoute(routeId: string): Promise<void> {
+    const client = await pool.connect();
+    try {
+        const sqlStatement = `
+            DELETE FROM Routes
+            WHERE id = $1;
+        `;
+
+        await client.query(sqlStatement, [routeId]);
+
+    } catch (error) {
+        console.error(`Erro ao remover a rota ${routeId}:`, error);
+        throw error;
+    } finally {
+        await client.release();
+    }
+  }
 }

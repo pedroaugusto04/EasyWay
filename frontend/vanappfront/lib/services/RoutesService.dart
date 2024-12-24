@@ -80,4 +80,35 @@ class RoutesService {
       return null;
     }
   }
+
+  static Future<bool> deleteRoute(String routeId) async {
+    try {
+      final url = Uri.parse('http://192.168.1.10:3000/routes/${routeId}');
+
+      String? jwtToken = await _secureStorage.read(key:"jwtToken");
+
+      if (jwtToken == null || LoginService.isTokenExpired(jwtToken)) {
+        throw AuthenticationException();
+      }
+
+      final response = await http.delete(
+          url,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': jwtToken,
+          }
+      );
+
+      if (response.statusCode != 200){
+        print('Falha ao remover rota: ${response.statusCode}');
+        return false;
+      }
+
+      return true;
+
+    } catch (e) {
+      print('Erro ao remover rota: $e');
+      return false;
+    }
+  }
 }

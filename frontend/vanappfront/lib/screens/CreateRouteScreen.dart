@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:vanappfront/models/UserModel.dart';
 import 'package:vanappfront/services/NavigationService.dart';
 import 'dart:async';
@@ -150,6 +152,7 @@ class _CreateRouteScreenState extends State<CreateRouteScreen> {
     );
   }
 
+
   @override
   void dispose() {
     _searchQuery.removeListener(_onSearchChanged);
@@ -197,11 +200,11 @@ class _CreateRouteScreenState extends State<CreateRouteScreen> {
                     controller: _originController,
                     focusNode: _originFocusNode,
                     decoration: const InputDecoration(
-                      labelText: 'Cidade de Origem',
+                      labelText: 'Local de Origem',
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Por favor, insira a cidade de origem.';
+                        return 'Por favor, insira o local de origem.';
                       }
                       return null;
                     },
@@ -210,11 +213,11 @@ class _CreateRouteScreenState extends State<CreateRouteScreen> {
                     controller: _destinationController,
                     focusNode: _destinationFocusNode, // Definindo o FocusNode
                     decoration: const InputDecoration(
-                      labelText: 'Cidade de Destino',
+                      labelText: 'Local de destino',
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Por favor, insira a cidade de destino.';
+                        return 'Por favor, insira o local de destino.';
                       }
                       return null;
                     },
@@ -309,6 +312,7 @@ class _CreateRouteScreenState extends State<CreateRouteScreen> {
         child: ElevatedButton(
           onPressed: () async {
             if (_formKey.currentState!.validate()){
+
               final routeName = _nameController.text;
               final origin = _originController.text;
               final destination = _destinationController.text;
