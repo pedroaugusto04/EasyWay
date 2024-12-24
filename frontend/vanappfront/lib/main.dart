@@ -2,6 +2,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:provider/provider.dart';
+import 'package:vanappfront/providers/RouteLocationProvider.dart';
 import 'package:vanappfront/screens/NavigationScreen.dart';
 import 'package:vanappfront/services/LoginService.dart';
 import 'package:vanappfront/services/NavigationService.dart';
@@ -48,9 +50,19 @@ Future<void> main() async {
   });
 
   if (await LoginService.isUserLoggedIn()){
-    runApp(const MyAppLoggedIn());
+    runApp(
+      ChangeNotifierProvider(
+        create: (context) => RouteLocationProvider(),
+        child: const MyAppLoggedIn(),
+      ),
+    );
   } else {
-    runApp(const MyApp());
+    runApp(
+      ChangeNotifierProvider(
+        create: (context) => RouteLocationProvider(),
+        child: const MyApp(),
+      ),
+    );
   }
 }
 

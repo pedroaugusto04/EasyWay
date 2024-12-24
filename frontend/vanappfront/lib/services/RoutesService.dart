@@ -73,7 +73,6 @@ class RoutesService {
       final List<RouteModel> routes = routesJson.map((dynamic item) {
         return RouteModel.fromJson(item as Map<String, dynamic>);
       }).toList();
-
       return routes;
     } catch (e) {
       print('Erro ao verificar rotas: $e');

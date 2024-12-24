@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:vanappfront/wdigets/RouteMapWidget.dart';
 import '../models/RouteModel.dart';
 import '../models/UserModel.dart';
+import '../providers/RouteLocationProvider.dart';
 import '../services/UserService.dart';
 import 'UserMapScreen.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 
 class RouteDetailsScreen extends StatefulWidget {
   final RouteModel route;
@@ -14,10 +19,10 @@ class RouteDetailsScreen extends StatefulWidget {
 }
 
 class _RouteDetailsScreenState extends State<RouteDetailsScreen> {
-  bool _isExpanded = true;
+  bool _isExpanded = false;
 
   Future<bool> _showDeleteConfirmation(BuildContext context, UserModel passenger) async {
-    bool result = await showDialog (
+    bool result = await showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -49,6 +54,7 @@ class _RouteDetailsScreenState extends State<RouteDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final locationProvider = Provider.of<RouteLocationProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('Detalhes da Rota: ${widget.route.name}'),
@@ -64,7 +70,6 @@ class _RouteDetailsScreenState extends State<RouteDetailsScreen> {
             Text('Origem: ${widget.route.origin}', style: const TextStyle(fontSize: 16)),
             const SizedBox(height: 8.0),
             Text('Destino: ${widget.route.destination}', style: const TextStyle(fontSize: 16)),
-            const SizedBox(height: 8.0),
             const SizedBox(height: 24.0),
 
             // Texto "Passageiros"
@@ -91,7 +96,10 @@ class _RouteDetailsScreenState extends State<RouteDetailsScreen> {
 
             _isExpanded
                 ? widget.route.passengers.isEmpty
-                ? Text('Nenhum passageiro na rota.')
+                ? Center(
+                  child: Text('Nenhum passageiro na rota.',
+                  style: TextStyle(fontSize: 16.0, color: Colors.grey)),
+                )
                 : Expanded(
               child: ListView.builder(
                 itemCount: widget.route.passengers.length,
@@ -128,15 +136,32 @@ class _RouteDetailsScreenState extends State<RouteDetailsScreen> {
                             icon: Icon(Icons.location_pin, size: 20),
                             onPressed: () {
                               Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => UserMapScreen(user: passenger,)));
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => UserMapScreen(
+                                    user: passenger,
+                                  ),
+                                ),
+                              );
                             },
                           ),
                           IconButton(
                             icon: Icon(Icons.delete, size: 20, color: Colors.red),
                             onPressed: () async {
+                              // verifica se o motorista está em rota
+                              if (locationProvider.isTracking) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Não é possível mudar de rota enquanto o rastreamento estiver ativo.'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                                return;
+                              }
+
                               // Exibe o modal de confirmação de exclusão
-                              bool isDeleted = await _showDeleteConfirmation(context, passenger);
+                              bool isDeleted =
+                              await _showDeleteConfirmation(context, passenger);
                               if (isDeleted) {
                                 setState(() {
                                   widget.route.passengers.remove(passenger);
@@ -151,7 +176,7 @@ class _RouteDetailsScreenState extends State<RouteDetailsScreen> {
                 },
               ),
             )
-                : Container(), // Se não estiver expandido, mostra nada
+                : Container(),
           ],
         ),
       ),

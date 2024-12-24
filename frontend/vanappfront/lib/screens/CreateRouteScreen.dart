@@ -197,11 +197,11 @@ class _CreateRouteScreenState extends State<CreateRouteScreen> {
                     controller: _originController,
                     focusNode: _originFocusNode,
                     decoration: const InputDecoration(
-                      labelText: 'Origem',
+                      labelText: 'Cidade de Origem',
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Por favor, insira a origem.';
+                        return 'Por favor, insira a cidade de origem.';
                       }
                       return null;
                     },
@@ -210,11 +210,11 @@ class _CreateRouteScreenState extends State<CreateRouteScreen> {
                     controller: _destinationController,
                     focusNode: _destinationFocusNode, // Definindo o FocusNode
                     decoration: const InputDecoration(
-                      labelText: 'Destino',
+                      labelText: 'Cidade de Destino',
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Por favor, insira o destino.';
+                        return 'Por favor, insira a cidade de destino.';
                       }
                       return null;
                     },
