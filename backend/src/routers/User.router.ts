@@ -7,5 +7,6 @@ userRouter.get("/",UserController.getUsers);
 userRouter.get("/:searchQuery",UserController.getUsersByQuery);
 userRouter.post("/isDriver/",UserController.verifyUserIsDriver);
 userRouter.delete("/routes/",UserController.deleteUserFromRoute);
+userRouter.get("/:userId/deviceToken",UserController.getUserDeviceToken);
 
 export {userRouter}

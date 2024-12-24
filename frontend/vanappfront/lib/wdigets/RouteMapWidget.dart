@@ -4,12 +4,13 @@ import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import '../models/RouteModel.dart';
+import '../models/UserModel.dart';
 import '../providers/RouteLocationProvider.dart';
 
 class RouteMapWidget extends StatefulWidget {
   final RouteModel route;
 
-  const RouteMapWidget({super.key, required this.route});
+  RouteMapWidget({super.key, required this.route});
 
   @override
   _RouteMapWidgetState createState() => _RouteMapWidgetState();
@@ -23,7 +24,8 @@ class _RouteMapWidgetState extends State<RouteMapWidget> {
   }
 
   void _startTracking() async {
-    final locationProvider = Provider.of<RouteLocationProvider>(context, listen: false);
+
+    final locationProvider = Provider.of<RouteLocationProvider>(context,listen: false);
 
     // Verifica as permissões antes de iniciar o rastreamento
     LocationPermission permission = await Geolocator.checkPermission();
@@ -43,6 +45,10 @@ class _RouteMapWidgetState extends State<RouteMapWidget> {
     }
 
     if (permission == LocationPermission.always || permission == LocationPermission.whileInUse) {
+      // carrega os passageiros
+      List<UserModel> passengersToNotify = widget.route.passengers;
+      locationProvider.setCurrentPassengers(passengersToNotify);
+
       locationProvider.startTracking();
     }
 
@@ -59,15 +65,6 @@ class _RouteMapWidgetState extends State<RouteMapWidget> {
   void _stopTracking() {
     final locationProvider = Provider.of<RouteLocationProvider>(context, listen: false);
     locationProvider.stopTracking();
-    resetMap();
-  }
-
-  void resetMap() {
-    setState(() {
-
-      final locationProvider = Provider.of<RouteLocationProvider>(context, listen: false);
-      locationProvider.currentPosition = null;
-    });
   }
 
   @override
@@ -75,7 +72,7 @@ class _RouteMapWidgetState extends State<RouteMapWidget> {
     final locationProvider = Provider.of<RouteLocationProvider>(context);
     final currentPosition = locationProvider.currentPosition;
 
-    if (widget.route.passengers.isEmpty) {
+    if (locationProvider.passengersToNotify.isEmpty && widget.route.passengers.isEmpty) {
       return Center(
         child: Text(
           'Nenhum passageiro para exibir no mapa.',
@@ -90,8 +87,12 @@ class _RouteMapWidgetState extends State<RouteMapWidget> {
           minZoom: 11.0,
           maxZoom: 17.0,
           initialCenter: LatLng(
-            widget.route.passengers.isNotEmpty ? widget.route.passengers[0].lat : 0.0,
-            widget.route.passengers.isNotEmpty ? widget.route.passengers[0].lng : 0.0,
+            widget.route.passengers.isNotEmpty
+                ? widget.route.passengers[0].lat
+                : 0.0,
+            widget.route.passengers.isNotEmpty
+                ? widget.route.passengers[0].lng
+                : 0.0,
           ),
           interactionOptions: const InteractionOptions(
               flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag),
@@ -102,8 +103,15 @@ class _RouteMapWidgetState extends State<RouteMapWidget> {
             urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
             userAgentPackageName: 'com.example.app',
           ),
+          /* verifica primeiro se a rota esta em andamento
+          caso esteja, devem ser exibidos os passageiros com as caracteristicas da rota em
+          andamento
+          Caso nao esteja, a rota nao esta ativa, exibe os passageiros a partir da rota
+          carregada do banco
+           */
           MarkerLayer(
-            markers: widget.route.passengers.map((passenger) {
+            markers: locationProvider.isTracking
+                ? locationProvider.passengersToNotify.map((passenger) {
               return Marker(
                 point: LatLng(passenger.lat, passenger.lng),
                 width: 500,
@@ -111,19 +119,50 @@ class _RouteMapWidgetState extends State<RouteMapWidget> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Container(
-                      width: 45,
-                      height: 45,
-                      decoration: BoxDecoration(
-                        color: Colors.blueAccent,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 2),
-                      ),
-                      child: Icon(
-                        Icons.location_on,
-                        size: 30,
-                        color: Colors.white,
-                      ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 45,
+                          height: 45,
+                          decoration: BoxDecoration(
+                            color: Colors.blueAccent,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 2),
+                          ),
+                          child: Icon(
+                            Icons.location_on,
+                            size: 30,
+                            color: Colors.white,
+                          ),
+                        ),
+                        IconButton( // notificações do passageiro
+                          icon: Icon(
+                            passenger.notificate
+                                ? Icons.notifications_active
+                                : Icons.notifications_off,
+                            color: passenger.notificate
+                                ? Colors.redAccent
+                                : Colors.grey,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              passenger.notificate = !passenger.notificate;
+                            });
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  passenger.notificate
+                                      ? 'Notificações ativadas para ${passenger.name}.'
+                                      : 'Notificações desativadas para ${passenger.name}.',
+                                ),
+                                duration: Duration(seconds: 1),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
                     ),
                     SizedBox(height: 6),
                     Material(
@@ -149,7 +188,87 @@ class _RouteMapWidgetState extends State<RouteMapWidget> {
                   ],
                 ),
               );
-            }).toList(),
+            }).toList()
+                : widget.route.passengers.isNotEmpty
+                ? widget.route.passengers.map((passenger) {
+              return Marker(
+                point: LatLng(passenger.lat, passenger.lng),
+                width: 500,
+                height: 500,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 45,
+                          height: 45,
+                          decoration: BoxDecoration(
+                            color: Colors.blueAccent,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 2),
+                          ),
+                          child: Icon(
+                            Icons.location_on,
+                            size: 30,
+                            color: Colors.white,
+                          ),
+                        ),
+                        IconButton( // notificações do passageiro
+                          icon: Icon(
+                            passenger.notificate
+                                ? Icons.notifications_active
+                                : Icons.notifications_off,
+                            color: passenger.notificate
+                                ? Colors.redAccent
+                                : Colors.grey,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              passenger.notificate = !passenger.notificate;
+                            });
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  passenger.notificate
+                                      ? 'Notificações ativadas para ${passenger.name}.'
+                                      : 'Notificações desativadas para ${passenger.name}.',
+                                ),
+                                duration: Duration(seconds: 1),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 6),
+                    Material(
+                      elevation: 4,
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.white,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.vertical,
+                          child: Text(
+                            passenger.name,
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black,
+                            ),
+                            softWrap: true,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList()
+                : [],
           ),
           if (currentPosition != null)
             MarkerLayer(

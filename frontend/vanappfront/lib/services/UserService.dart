@@ -133,9 +133,6 @@ class UserService {
         })
       );
 
-      print("OK");
-      print(response);
-
       if (response.statusCode != 200){
         print('Falha ao remover usuário da rota: ${response.statusCode}');
         return false;
@@ -146,6 +143,37 @@ class UserService {
     } catch (e) {
       print('Erro ao remover usuário da rota: $e');
       return false;
+    }
+  }
+
+  static Future<String?> getUserDeviceToken(UserModel user) async {
+    try {
+      final url = Uri.parse('http://192.168.1.10:3000/users/${user.id}/deviceToken');
+
+      String? jwtToken = await _secureStorage.read(key: "jwtToken");
+
+      if (jwtToken == null || LoginService.isTokenExpired(jwtToken)) {
+        throw AuthenticationException();
+      }
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': jwtToken,
+        },
+      );
+
+      if (response.statusCode != 200) {
+        print('Falha ao recuperar device token do usuario: ${response.statusCode}');
+      }
+
+      String? deviceToken = json.decode(response.body)['deviceToken'];
+
+      return deviceToken;
+
+    } catch (e) {
+      print('Falha ao recuperar device token do usuario: $e');
     }
   }
 }

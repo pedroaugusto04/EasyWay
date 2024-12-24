@@ -1,18 +1,28 @@
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/foundation.dart';
+import '../helpers/ProximityHelper.dart';
+import '../models/UserModel.dart';
 
 class RouteLocationProvider extends ChangeNotifier {
   Position? _currentPosition;
   StreamSubscription<Position>? _positionStreamSubscription;
   bool _isTracking = false;
+  List<UserModel> passengersToNotify = [];
 
   Position? get currentPosition => _currentPosition;
   bool get isTracking => _isTracking;
 
+  void setCurrentPassengers(List<UserModel> passengers) {
+    this.passengersToNotify = passengers;
+  }
   set currentPosition(Position? position) {
     _currentPosition = position;
     notifyListeners();
+  }
+
+  set isTracking(bool isTracking){
+    isTracking = isTracking;
   }
 
   void startTracking() async {
@@ -23,7 +33,6 @@ class RouteLocationProvider extends ChangeNotifier {
     }
 
     if (permission == LocationPermission.denied) {
-      // Handle permission denied
       return;
     }
 
@@ -36,7 +45,7 @@ class RouteLocationProvider extends ChangeNotifier {
         ),
       ).listen((Position position) {
         _currentPosition = position;
-        print(position);
+        ProximityHelper.checkProximity(position,passengers: passengersToNotify);
         notifyListeners(); // Notifica os ouvintes para atualizar a UI
       });
 
@@ -46,8 +55,11 @@ class RouteLocationProvider extends ChangeNotifier {
   }
 
   void stopTracking() {
+    // finalizacao da rota
     _positionStreamSubscription?.cancel();
-    _isTracking = false;  // finalizacao da rota
+    currentPosition = null;
+    _isTracking = false;
+    passengersToNotify = [];
     notifyListeners(); // notifica para atualizar a UI
   }
 

@@ -88,4 +88,31 @@ export class UserController {
             res.status(500).send("Erro interno ao verificar se o usuario eh um motorista ativo!");
         }
     }
+
+    public static async getUserDeviceToken(req: Request, res: Response) {
+        try {
+            const token = req.headers.authorization;
+
+            const userId = req.params.userId;
+
+            if (!token) {
+                res.status(401).send("Token de autenticação não fornecido.")
+                return;
+            }
+            
+            if (typeof userId !== 'string') {
+                res.status(400).send("Id do usuário inválido ou não fornecido.");
+                return;
+            }
+
+            const deviceToken = await UserService.getUserDeviceToken(userId);
+            
+            res.status(200).json({
+                deviceToken: deviceToken,
+            });
+        } catch(error){
+            console.error("Erro ao recuperar device token",error);
+            res.status(500).send("Erro interno ao recuperar device token do usuario");
+        }
+    }
 }

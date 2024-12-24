@@ -80,4 +80,29 @@ export class UserService {
         await client.release();
     }
   }
+
+  public static async getUserDeviceToken(userId: String): Promise<void> {
+    const client = await pool.connect();
+    try {
+        const sqlStatement = `
+            SELECT device_token 
+            FROM Users 
+            WHERE id = $1
+        `;
+
+        const result = await client.query(sqlStatement, [userId]);
+        if (result.rows.length > 0) {
+            const deviceToken = result.rows[0].device_token;
+            return deviceToken || null;
+        } else {
+            console.log('Usuário não encontrado');
+        }
+
+    } catch (error) {
+        console.error(`Erro ao buscar o deviceToken para o usuário ${userId}:`, error);
+        throw error;
+    } finally {
+        await client.release();
+    }
+  }
 }

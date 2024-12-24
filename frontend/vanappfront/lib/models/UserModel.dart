@@ -4,6 +4,7 @@ class UserModel {
   final String email;
   final double lat;
   final double lng;
+  bool notificate;
 
   UserModel({
     required this.id,
@@ -11,6 +12,7 @@ class UserModel {
     required this.email,
     required this.lat,
     required this.lng,
+    this.notificate = true,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> map) {
@@ -20,6 +22,7 @@ class UserModel {
       email: map['email'],
       lat: map['lat'].toDouble(),
       lng: map['lng'].toDouble(),
+      notificate: map['notificate'] ?? true,
     );
   }
 
@@ -30,6 +33,7 @@ class UserModel {
       'email': email,
       'lat': lat,
       'lng': lng,
+      'notificate': notificate,
     };
   }
 }
