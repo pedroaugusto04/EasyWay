@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
-
 import '../Exceptions/AuthenticationException.dart';
+import '../models/RegisterUserModel.dart';
 import '../models/UserModel.dart';
 import 'LoginService.dart';
 
@@ -10,6 +10,7 @@ import 'LoginService.dart';
 class UserService {
 
   static final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
+
 
   static Future<List<UserModel>?> getUsers() async {
     try {
@@ -43,6 +44,35 @@ class UserService {
       return [];
     }
   }
+
+  static Future<bool> createUser(RegisterUserModel user) async {
+    try {
+      final url = Uri.parse('http://192.168.1.10:3000/users/');
+
+      final userJson = json.encode({
+        'user': user.toJson(),
+      });
+
+      final response = await http.post(
+          url,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: userJson
+      );
+
+      if (response.statusCode != 200) {
+        print('Falha ao cadastrar usuario: ${response.statusCode}');
+        return false;
+      }
+      // sucesso ao cadastrar
+      return true;
+    } catch (e) {
+      print('Erro ao cadastrar usuario: $e');
+      return false;
+    }
+  }
+
 
   static Future<List<UserModel>?> getUsersByQuery(String searchQuery) async {
     try {

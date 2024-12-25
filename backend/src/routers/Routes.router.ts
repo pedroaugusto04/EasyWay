@@ -6,5 +6,6 @@ const routesRouter = Router();
 routesRouter.post("/",RoutesController.createRoute);
 routesRouter.get("/",RoutesController.getUserRoutes);
 routesRouter.delete("/:routeId",RoutesController.deleteRoute);
+routesRouter.post("/:routeId/passengers/:passengerId",RoutesController.addPassenger);
 
 export {routesRouter}

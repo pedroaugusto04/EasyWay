@@ -5,8 +5,10 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:vanappfront/providers/RouteLocationProvider.dart';
 import 'package:vanappfront/screens/NavigationScreen.dart';
+import 'package:vanappfront/screens/RegisterScreen.dart';
 import 'package:vanappfront/services/LoginService.dart';
 import 'package:vanappfront/services/NavigationService.dart';
+import 'package:vanappfront/widgets/CustomAppBar.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -49,21 +51,12 @@ Future<void> main() async {
     }
   });
 
-  if (await LoginService.isUserLoggedIn()){
-    runApp(
-      ChangeNotifierProvider(
-        create: (context) => RouteLocationProvider(),
-        child: const MyAppLoggedIn(),
-      ),
-    );
-  } else {
-    runApp(
-      ChangeNotifierProvider(
-        create: (context) => RouteLocationProvider(),
-        child: const MyApp(),
-      ),
-    );
-  }
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => RouteLocationProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 
@@ -86,36 +79,26 @@ class MyApp extends StatelessWidget {
           backgroundColor: Colors.grey[300],
         ),
       ),
-      home: const LoginScreen(),
-    );
-  }
+      home: FutureBuilder<bool>(
+        future: LoginService.isUserLoggedIn(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Scaffold(
+              appBar: CustomAppBar(),
+              body: const Center(child: CircularProgressIndicator()),
+            );
+          }
 
-}
-
-// caso a sessao do usuario esteja ativa
-class MyAppLoggedIn extends StatelessWidget {
-  const MyAppLoggedIn({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'VanApp',
-      theme: ThemeData(
-        colorScheme: const ColorScheme.light(
-          primary: Color(0xFF007BFF),
-          onPrimary: Colors.white,
-          secondary: Color(0xFF007BFF),
-          onSecondary: Colors.white,
-        ),
-        useMaterial3: true,
-        appBarTheme: AppBarTheme(
-          backgroundColor: Colors.grey[300],
-        ),
+          if (snapshot.hasError || !snapshot.hasData || snapshot.data == false) {
+            // caso nao esteja logado
+            return const LoginScreen();
+          }
+          // caso esteja logado
+          return const NavigationScreen();
+        },
       ),
-      home: const NavigationScreen(),
     );
   }
-
 }
 
 class LoginScreen extends StatefulWidget {
@@ -137,7 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
     bool isAuthenticated = await authenticateUser(email, password);
 
     if (isAuthenticated) {
-      _navigationService.navigateTo(NavigationScreen(),context);
+      _navigationService.navigateTo(NavigationScreen(), context);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Credenciais inválidas')),
@@ -157,30 +140,61 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('VanApp')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(labelText: 'E-mail'),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _passwordController,
-              decoration: const InputDecoration(labelText: 'Senha'),
-              obscureText: true,
-            ),
-            const SizedBox(height: 32),
-            ElevatedButton(
-              onPressed: _login,
-              child: const Text('Entrar'),
-            ),
-          ],
+    return GestureDetector(
+      onTap: () {
+        // Fecha o teclado quando o usuário toca fora de um campo de texto
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        appBar: CustomAppBar(),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              TextField(
+                controller: _emailController,
+                decoration: InputDecoration(
+                  labelText: 'E-mail',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: _passwordController,
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: 'Senha',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 32),
+              ElevatedButton(
+                onPressed: _login,
+                style: ElevatedButton.styleFrom(
+                  minimumSize: Size(double.infinity, 50),
+                  backgroundColor: Theme.of(context).primaryColor,
+                ),
+                child: const Text(
+                  'Entrar',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => RegisterScreen()),
+                  );
+                },
+                child: const Text('Ainda não tem uma conta? Registre-se aqui'),
+              ),
+            ],
+          ),
         ),
       ),
     );

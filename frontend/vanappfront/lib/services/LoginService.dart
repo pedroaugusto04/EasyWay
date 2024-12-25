@@ -40,6 +40,10 @@ class LoginService {
     _secureStorage.write(key:'jwtToken',value:jwtToken);
   }
 
+  static Future<void> logout() async {
+    await _secureStorage.delete(key: 'jwtToken');
+  }
+
   static Future<bool> isUserLoggedIn() async {
      String? jwtToken = await _secureStorage.read(key: "jwtToken");
 

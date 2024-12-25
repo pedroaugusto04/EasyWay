@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:vanappfront/models/UserModel.dart';
-import 'package:vanappfront/services/NavigationService.dart';
 import 'dart:async';
 import '../models/RouteModel.dart';
 import '../services/RoutesService.dart';
 import '../services/UserService.dart';
-import 'RoutesScreen.dart';
 
 class CreateRouteScreen extends StatefulWidget {
   const CreateRouteScreen({Key? key}) : super(key: key);
@@ -37,7 +33,6 @@ class _CreateRouteScreenState extends State<CreateRouteScreen> {
     super.initState();
     _loadUsers();
     _filteredUsers = _allUsers;
-    _searchQuery.addListener(_onSearchChanged);
   }
 
   Future<void> _loadUsers() async {
@@ -49,28 +44,6 @@ class _CreateRouteScreenState extends State<CreateRouteScreen> {
     } catch (e) {
       print("Erro ao carregar usuários: $e");
     }
-  }
-
-  _onSearchChanged() {
-    if (_debounce?.isActive ?? false) _debounce?.cancel();
-    _debounce = Timer(
-        const Duration(milliseconds: 500),
-            () {
-          if (this.searchText != _searchQuery.text) {
-            _filteredUsers = _allUsers
-                .where((user) =>
-            !_passengers.any((passenger) => passenger.id == user.id))
-                .toList();
-            setState(() {
-              this._filteredUsers = this._filteredUsers.where((item) =>
-                  item.name
-                      .toLowerCase()
-                      .contains(_searchQuery.text.toString().toLowerCase()))
-                  .toList();
-            });
-          }
-          searchText = _searchQuery.text;
-        });
   }
 
   void _showAddPassengerModal(BuildContext context) {
@@ -92,18 +65,21 @@ class _CreateRouteScreenState extends State<CreateRouteScreen> {
                         labelText: 'Nome ou E-mail',
                         hintText: 'Digite o nome ou e-mail',
                       ),
-                      onChanged: (query) {
-                        // busca por similaridade de nome e email
-                        // passageiros ja selecionados nao devem aparecer
-                        setDialogState(() {
-                          _filteredUsers = _allUsers
-                              .where((user) =>
-                          (user.name.toLowerCase().contains(query.toLowerCase()) ||
-                              user.email.toLowerCase().contains(query.toLowerCase())) &&
-                              !_passengers.any((passenger) => passenger.id == user.id))
-                              .toList();
-                        });
-                      },
+                        onChanged: (query) {
+                          // busca por similaridade de nome e email
+                          // passageiros ja selecionados nao devem aparecer
+                          _debounce?.cancel();
+                          _debounce = Timer(const Duration(milliseconds: 300), () {
+                            setDialogState(() {
+                              _filteredUsers = _allUsers
+                                  .where((user) =>
+                              (user.name.toLowerCase().contains(query.toLowerCase()) ||
+                                  user.email.toLowerCase().contains(query.toLowerCase())) &&
+                                  !_passengers.any((passenger) => passenger.id == user.id))
+                                  .toList();
+                            });
+                          });
+                        }
                     ),
                     SizedBox(height: 16.0),
                     if (_filteredUsers.isNotEmpty)
@@ -155,7 +131,6 @@ class _CreateRouteScreenState extends State<CreateRouteScreen> {
 
   @override
   void dispose() {
-    _searchQuery.removeListener(_onSearchChanged);
     _searchQuery.dispose();
     _debounce?.cancel();
     _nameFocusNode.dispose();

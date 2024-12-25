@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vanappfront/screens/RouteDetailsScreen.dart';
 import 'package:vanappfront/services/RoutesService.dart';
 import '../models/RouteModel.dart';
+import '../widgets/CustomAppBar.dart';
 import 'CreateRouteScreen.dart';
 
 class RoutesScreen extends StatefulWidget {
@@ -58,6 +59,7 @@ class _RoutesScreenState extends State<RoutesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: CustomAppBar(),
       body: Stack(
         children: [
           FutureBuilder<List<RouteModel>?>(

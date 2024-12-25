@@ -1,12 +1,18 @@
 import { Router } from "express";
 import { UserController } from "../controllers/UserController";
+import { authenticateMiddleware } from "../middlewares/authMiddleware";
 
 const userRouter = Router();
 
-userRouter.get("/",UserController.getUsers);
-userRouter.get("/:searchQuery",UserController.getUsersByQuery);
-userRouter.post("/isDriver/",UserController.verifyUserIsDriver);
-userRouter.delete("/routes/",UserController.deleteUserFromRoute);
-userRouter.get("/:userId/deviceToken",UserController.getUserDeviceToken);
+// sem autenticacao (cadastro usuario)
+userRouter.post("/",UserController.createUser);
+
+
+// rotas autenticadas
+userRouter.get("/",authenticateMiddleware,UserController.getUsers);
+userRouter.get("/:searchQuery",authenticateMiddleware,UserController.getUsersByQuery);
+userRouter.post("/isDriver/",authenticateMiddleware,UserController.verifyUserIsDriver);
+userRouter.delete("/routes/",authenticateMiddleware,UserController.deleteUserFromRoute);
+userRouter.get("/:userId/deviceToken",authenticateMiddleware,UserController.getUserDeviceToken);
 
 export {userRouter}

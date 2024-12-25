@@ -1,10 +1,8 @@
-export class User {
+export class UserDTO {
     id: number;
     name: string;
     email: string;
-    password: string;
     is_driver: boolean;  // 0 = not a driver, 1 = is a driver
-    device_token: string;
     lat: DoubleRange;
     lng: DoubleRange;
 
@@ -12,9 +10,7 @@ export class User {
         this.id = id;
         this.name = name;
         this.email = email;
-        this.password = password;
         this.is_driver = is_driver;
-        this.device_token = device_token;
         this.lat = lat;
         this.lng = lng;
     }

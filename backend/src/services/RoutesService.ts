@@ -37,12 +37,14 @@ export class RoutesService {
         }
 
         if (row.passenger_id) {
+          // considerar uso de DTO
           const passenger = new User(
             row.passenger_id,
             row.passenger_name,
             row.passenger_email,
             '', 
             false,
+            '',
             row.passenger_lat,
             row.passenger_lng
           );
@@ -119,6 +121,24 @@ export class RoutesService {
 
     } catch (error) {
         console.error(`Erro ao remover a rota ${routeId}:`, error);
+        throw error;
+    } finally {
+        await client.release();
+    }
+  }
+
+  public static async addPassenger(passengerId: string, routeId: string): Promise<void> {
+    const client = await pool.connect();
+    try {
+        const sqlStatement = `
+            INSERT INTO Users_Routes (user_id, route_id)
+            VALUES ($1, $2)
+        `;
+
+        await client.query(sqlStatement, [passengerId, routeId]);
+
+    } catch (error) {
+        console.error(`Erro ao adicionar o passageiro ${passengerId} na rota ${routeId}:`, error);
         throw error;
     } finally {
         await client.release();

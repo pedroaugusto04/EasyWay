@@ -35,12 +35,10 @@ class RoutesService {
 
       if (response.statusCode != 200) {
         print('Falha ao buscar rotas: ${response.statusCode}');
-        return null;
       }
 
     } catch (e) {
       print('Erro ao verificar rotas: $e');
-      return null;
     }
   }
 
@@ -109,6 +107,33 @@ class RoutesService {
     } catch (e) {
       print('Erro ao remover rota: $e');
       return false;
+    }
+  }
+
+  static Future<void> addPassengerToRoute(String routeId, String passengerId) async {
+    try {
+      final url = Uri.parse('http://192.168.1.10:3000/routes/${routeId}/passengers/${passengerId}');
+
+      String? jwtToken = await _secureStorage.read(key:"jwtToken");
+
+      if (jwtToken == null || LoginService.isTokenExpired(jwtToken)) {
+        throw AuthenticationException();
+      }
+
+      final response = await http.post(
+          url,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': jwtToken,
+          }
+      );
+
+      if (response.statusCode != 200){
+        print('Falha ao adicionar passageiro na rota: ${response.statusCode}');
+      }
+
+    } catch (e) {
+      print('Erro ao adicionar passageiro na rota: $e');
     }
   }
 }

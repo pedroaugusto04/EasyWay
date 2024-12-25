@@ -5,7 +5,6 @@ import 'package:vanappfront/services/NavigationService.dart';
 import '../services/DeviceTokenService.dart';
 import '../services/LoginService.dart';
 import '../services/UserService.dart';
-import 'HomeScreen.dart';
 import 'MapScreen.dart';
 import 'RoutesScreen.dart';
 
@@ -41,17 +40,14 @@ class _NavigationScreenState extends State<NavigationScreen> {
   Future<Widget> navigateFromNavBar(int index, BuildContext context) async {
     switch (index) {
       case 0:
-        Widget homeWidget = await _navigationService.navigateFromNavBar(() => const HomeScreen(), context);
-        return homeWidget;
-      case 1:
         Widget mapWidget = await _navigationService.navigateFromNavBar(() => const MapScreen(), context);
         return mapWidget;
-      case 2:
+      case 1:
         Widget passengersWidget = await _navigationService.navigateFromNavBar(() => const RoutesScreen(), context);
         return passengersWidget;
       default:
-        Widget homeWidget = await _navigationService.navigateFromNavBar(() => const HomeScreen(), context);
-        return homeWidget;
+        Widget mapWidget = await _navigationService.navigateFromNavBar(() => const MapScreen(), context);
+        return mapWidget;
       }
   }
 
@@ -81,7 +77,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
           return const Center();
         } else {
           return Scaffold(
-            appBar: AppBar(title: const Text('VanApp')),
             bottomNavigationBar: NavigationBar(
               backgroundColor: Colors.grey[300],
               onDestinationSelected: (int index) {
@@ -91,11 +86,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
               },
               selectedIndex: currentPageIndex,
               destinations: [
-                const NavigationDestination(
-                  selectedIcon: Icon(Icons.home),
-                  icon: Icon(Icons.home_outlined),
-                  label: 'Home',
-                ),
                 const NavigationDestination(
                   icon: Icon(Icons.location_pin),
                   label: 'Mapa',

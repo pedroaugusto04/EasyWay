@@ -86,4 +86,25 @@ export class RoutesController {
         res.status(500).send("Erro interno ao deletar rota!");
     }
   }
+
+  public static async addPassenger(req: Request, res: Response) {
+    try {
+        const token = req.headers.authorization;
+
+        const passengerId = req.params.passengerId;
+        const routeId = req.params.routeId;
+
+        if (!token) {
+            res.status(401).send("Token de autenticação não fornecido.")
+            return;
+        }
+            
+        await RoutesService.addPassenger(passengerId,routeId);
+        
+        res.status(200).send("Sucesso ao deletar rota");
+    } catch(error){
+        console.error("Erro ao deletar rota:",error);
+        res.status(500).send("Erro interno ao deletar rota!");
+    }
+  }
 }

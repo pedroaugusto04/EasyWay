@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:provider/provider.dart';
+import 'package:vanappfront/widgets/CustomAppBar.dart';
 import '../models/RouteModel.dart';
 import '../providers/RouteLocationProvider.dart';
 import '../services/RoutesService.dart';
-import '../wdigets/RouteMapWidget.dart';
+import '../widgets/RouteMapWidget.dart';
 import 'CreateRouteScreen.dart';
 
 class MapScreen extends StatefulWidget {
@@ -38,6 +39,7 @@ class _MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     final locationProvider = Provider.of<RouteLocationProvider>(context);
     return Scaffold(
+      appBar: CustomAppBar(),
       body: Stack(
         children: [
           FutureBuilder<List<RouteModel>>(

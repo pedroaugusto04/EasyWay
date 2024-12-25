@@ -2,10 +2,28 @@ import dotenv from "dotenv";
 import { Request, Response } from 'express';
 import { UserService } from "../services/UserService";
 import { getUserIdByToken } from "../utils/jwtAuth";
+import { hashPassword } from "../utils/bcrypt";
 
 dotenv.config();
 
 export class UserController {
+
+    public static async createUser(req: Request, res: Response) {
+
+        try {
+
+          const {user} = req.body;
+
+          user.password = await hashPassword(user.password);
+          
+          await UserService.createUser(user);
+          
+          res.status(200).send("Usuário cadastrado com sucesso!");
+        } catch(error){
+          console.error("Erro ao cadastrar usuário:",error);
+          res.status(500).send("Erro ao cadastrar usuário");
+        }
+      }
 
     public static async getUsers(req: Request, res: Response) {
         const token = req.headers.authorization;

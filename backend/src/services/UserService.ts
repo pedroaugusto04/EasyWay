@@ -3,6 +3,28 @@ import { User } from "../models/User";
 
 export class UserService {
 
+  public static async createUser(user: User): Promise<void> {
+    const client = await pool.connect(); 
+
+    try {
+      const sqlStatement = `
+        INSERT INTO Users (name, email,password,lat,lng)
+        VALUES ($1, $2, $3, $4, $5)
+      `;
+
+      const values = [user.name, user.email, user.password, user.lat,user.lng];
+
+      await client.query(sqlStatement, values);
+
+    } catch (error) {
+      console.error('Erro ao criar usuário:', error);
+      throw error;  
+    } finally {
+      await client.release();
+    }
+  }
+
+
   public static async getUsers(): Promise<User[]> {
     const client = await pool.connect();
     
