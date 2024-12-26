@@ -45,6 +45,40 @@ class UserService {
     }
   }
 
+  static Future<UserModel?> getUser() async {
+    try {
+      final url = Uri.parse('http://192.168.1.10:3000/users/userInfo');
+
+      String? jwtToken = await _secureStorage.read(key: "jwtToken");
+
+      if (jwtToken == null || LoginService.isTokenExpired(jwtToken)) {
+        throw AuthenticationException();
+      }
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': jwtToken,
+        },
+      );
+
+      if (response.statusCode != 200) {
+        print('Falha ao buscar usuario: ${response.statusCode}');
+        return null;
+      }
+
+      final dynamic userJson = json.decode(response.body);
+
+      UserModel user = UserModel.fromJson(userJson);
+
+      return user;
+    } catch (e) {
+      print('Falha ao buscar usuario: $e');
+      return null;
+    }
+  }
+
   static Future<bool> createUser(RegisterUserModel user) async {
     try {
       final url = Uri.parse('http://192.168.1.10:3000/users/');
@@ -120,7 +154,6 @@ class UserService {
       final response = await http.post(
         url,
         headers: {
-          'Content-Type': 'application/json',
           'Authorization': jwtToken,
         },
       );

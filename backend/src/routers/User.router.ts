@@ -16,5 +16,6 @@ userRouter.delete("/routes/",authenticateMiddleware,UserController.deleteUserFro
 userRouter.get("/:userId/deviceToken",authenticateMiddleware,UserController.getUserDeviceToken);
 userRouter.get("/isDriver/routes/:routeId",authenticateMiddleware,UserController.verifyUserIsRouteDriver);
 userRouter.post("/isDriver/routes/",authenticateMiddleware,UserController.verifyUserIsRoutesDriver);
+userRouter.post("/userInfo",authenticateMiddleware,UserController.getUser);
 
 export {userRouter}

@@ -45,6 +45,27 @@ export class UserController {
         res.status(200).json(usersDTO);
     }
 
+    public static async getUser(req: Request, res: Response) {
+        const token = req.headers.authorization;
+        if (!token) {
+            res.status(401).send("Token de autenticação não fornecido.")
+            return;
+        }
+
+        const userId = getUserIdByToken(token);
+
+        const user = await UserService.getUser(userId);
+    
+        if (!user) {
+            res.status(500);
+            return
+        }
+    
+        const { password, ...userDTO } = user;
+
+        res.status(200).json(userDTO);
+    }
+
     public static async getUsersByQuery(req: Request, res: Response) {
         const token = req.headers.authorization;
         

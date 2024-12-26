@@ -22,7 +22,7 @@ class _RoutesScreenState extends State<RoutesScreen> {
   }
 
   void _fetchRoutes() {
-    _routesFuture = RoutesService.getRoutes();
+    _routesFuture = RoutesService.getRoutesDrivenByUser();
   }
 
   Future<bool> _confirmRemoveRoute(RouteModel route) async {
@@ -91,9 +91,6 @@ class _RoutesScreenState extends State<RoutesScreen> {
                           color: Colors.blue,
                         ),
                         title: Text(route.name),
-                        subtitle: Text(
-                          'Origem: ${route.origin}\nDestino: ${route.destination}',
-                        ),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min, // Garantir que os botões não ocupem espaço extra
                           children: [
@@ -154,8 +151,8 @@ class _RoutesScreenState extends State<RoutesScreen> {
                   });
                 }
               },
-              child: const Icon(Icons.add),
               tooltip: 'Criar Rota',
+              child: const Icon(Icons.add),
             ),
           ),
         ],

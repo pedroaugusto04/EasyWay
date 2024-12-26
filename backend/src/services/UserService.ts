@@ -44,6 +44,29 @@ export class UserService {
     }
   }
 
+  public static async getUser(userId: string): Promise<User | null> {
+    const client = await pool.connect();
+    
+    try {
+      const sqlStatement = `
+        SELECT * FROM users 
+        WHERE id = $1
+      `;
+      
+      const res = await client.query(sqlStatement, [userId]);
+  
+      if (res.rows.length > 0){
+        return res.rows[0];
+      }
+      return null;
+    } catch (error) {
+      console.error(`Erro ao buscar usuario:`, error);
+      throw error; 
+    } finally {
+      await client.release(); 
+    }
+  }
+
   public static async getUsersByQuery(searchQuery: string): Promise<User[]> {
     const client = await pool.connect();
     

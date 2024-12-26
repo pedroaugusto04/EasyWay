@@ -25,7 +25,7 @@ const PORT = process.env.PORT || 3000;
 app.use('/login', loginRouter);
 app.use('/notification', authenticateMiddleware, notificationRouter);
 app.use('/deviceToken', authenticateMiddleware, deviceTokenRouter);
-app.use('/users', userRouter);
+app.use('/users',userRouter);
 app.use('/routes', authenticateMiddleware, routesRouter);
 
 const wss = new WebSocketServer({ server });

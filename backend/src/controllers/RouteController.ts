@@ -37,6 +37,34 @@ export class RoutesController {
     res.status(200).json(routesDTO);
   }
 
+  public static async getRoutesDrivenByUser(req: Request, res: Response) {
+    const token = req.headers.authorization;
+    
+    if (!token) {
+        res.status(401).send("Token de autenticação não fornecido.")
+        return;
+    }
+
+    const userId = getUserIdByToken(token);
+
+    const routes: Route[] = await RoutesService.getRoutesDrivenByUser(userId);
+
+    const routesDTO = routes.map(route => ({
+      id: route.id,
+      name: route.name,
+      origin: route.origin,
+      destination: route.destination,
+      passengers: route.passengers,
+    }));
+    
+    if (!routesDTO) {
+        res.status(500);
+        return
+    }
+    
+    res.status(200).json(routesDTO);
+  }
+
   public static async createRoute(req: Request, res: Response) {
 
     try {

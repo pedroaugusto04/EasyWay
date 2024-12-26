@@ -70,6 +70,75 @@ export class RoutesService {
     }
 }
 
+public static async getRoutesDrivenByUser(userId: string): Promise<Route[]> {
+  const client = await pool.connect();
+  try {
+    const sqlStatement = `
+      SELECT 
+        r.id AS route_id,
+        r.name AS route_name,
+        r.origin,
+        r.destination,
+        r.driver_id,
+        u.id AS passenger_id,
+        u.name AS passenger_name,
+        u.email AS passenger_email,
+        u.lat AS passenger_lat,
+        u.lng AS passenger_lng
+      FROM Routes r
+      LEFT JOIN Users_Routes ur ON r.id = ur.route_id
+      LEFT JOIN Users u ON ur.user_id = u.id
+      WHERE r.driver_id = (
+        SELECT id 
+        FROM Drivers 
+        WHERE user_id = $1
+      )
+    `;
+
+    const result = await client.query(sqlStatement, [userId]);
+
+    const routes = result.rows.reduce((acumulator: Route[], row: any) => {
+      let route = acumulator.find(r => r.id === row.route_id);
+
+      if (!route) {
+        route = {
+          id: row.route_id,
+          name: row.route_name,
+          origin: row.origin,
+          destination: row.destination,
+          driver_id: row.driver_id,
+          passengers: []
+        };
+        acumulator.push(route);
+      }
+
+      if (row.passenger_id) {
+        const passenger = new User(
+          row.passenger_id,
+          row.passenger_name,
+          row.passenger_email,
+          '', 
+          false,
+          '',
+          row.passenger_lat,
+          row.passenger_lng
+        );
+        route.passengers!.push(passenger);
+      }
+    
+      return acumulator;
+    }, []);
+
+    return routes;
+
+  } catch (error) {
+    console.error("Erro ao buscar as rotas conduzidas pelo motorista: ", error);
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
 
   public static async createRoute(route: Route, driverId: string): Promise<void> {
 

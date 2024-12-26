@@ -65,6 +65,10 @@ class _MapScreenState extends State<MapScreen> {
     return await RoutesService.getRoutes() ?? [];
   }
 
+  Future<List<RouteModel>> fetchRoutesDrivenByUser() async {
+    return await RoutesService.getRoutesDrivenByUser() ?? [];
+  }
+
   @override
   Widget build(BuildContext context) {
     final locationProvider = Provider.of<RouteLocationProvider>(context);
