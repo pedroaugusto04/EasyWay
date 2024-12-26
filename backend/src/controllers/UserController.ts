@@ -87,6 +87,54 @@ export class UserController {
         }
     }
 
+    public static async verifyUserIsRouteDriver(req: Request, res: Response) {
+        try {
+            const token = req.headers.authorization;
+
+            if (!token) {
+                res.status(401).send("Token de autenticação não fornecido.")
+                return;
+            }
+
+            const userId = getUserIdByToken(token);
+            const routeId = req.params.routeId;
+
+            const isRouteDriver: boolean = await UserService.verifyIsRouteDriver(userId,routeId);
+            res.status(200).json({ isRouteDriver });
+        } catch(error){
+            console.error("Erro ao verificar se o usuario eh um motorista ativo:",error);
+            res.status(500).send("Erro interno ao verificar se o usuario eh um motorista ativo!");
+        }
+    }
+
+    public static async verifyUserIsRoutesDriver(req: Request, res: Response) {
+        try {
+          const token = req.headers.authorization;
+      
+          if (!token) {
+            res.status(401).send("Token de autenticação não fornecido.");
+            return;
+          }
+      
+          const userId = getUserIdByToken(token);
+          const routesId: string[] = req.body.routes; 
+  
+          // pra cada rota, verifica se o usuario eh o motorista
+          const isDriverResults = await Promise.all(
+            routesId.map(async (routeId) => {
+              const isRouteDriver: boolean = await UserService.verifyIsRouteDriver(userId, routeId);
+              return { routeId, isRouteDriver };
+            })
+          );
+      
+          res.status(200).json({ isDriverResults });
+      
+        } catch (error) {
+          console.error("Erro ao verificar se o usuario eh um motorista ativo:", error);
+          res.status(500).send("Erro interno ao verificar se o usuario eh um motorista ativo!");
+        }
+      }
+
     public static async deleteUserFromRoute(req: Request, res: Response) {
         try {
             const token = req.headers.authorization;

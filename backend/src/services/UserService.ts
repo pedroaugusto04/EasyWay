@@ -88,6 +88,31 @@ export class UserService {
     }
   }
 
+  public static async verifyIsRouteDriver(userId: string, routeId: string): Promise<boolean> {
+    const client = await pool.connect();
+    try {
+        const sqlStatement = `
+        SELECT EXISTS (
+            SELECT 1
+            FROM Drivers
+            JOIN Users ON Users.id = Drivers.user_id
+            JOIN Routes ON Routes.driver_id = Drivers.id
+            WHERE Drivers.user_id = $1
+            AND Routes.id = $2
+            AND Drivers.is_active = true
+            AND Users.is_driver = true
+        );`;
+
+        const res = await client.query(sqlStatement, [userId, routeId]);
+        return res.rows[0].exists;  
+    } catch (error) {
+        console.error(`Erro ao verificar se o usuário ${userId} é o motorista da rota ${routeId}:`, error);
+        throw error;
+    } finally {
+        await client.release();
+    }
+}
+
   public static async deleteUserFromRoute(passengerId: string, routeId: string): Promise<void> {
     const client = await pool.connect();
     try {

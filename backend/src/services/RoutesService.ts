@@ -8,15 +8,21 @@ export class RoutesService {
     const client = await pool.connect();
     try {
       const sqlStatement = `
-        SELECT r.id AS route_id, r.name AS route_name, r.origin, r.destination, r.driver_id, r.created_at,
-               ur.user_id AS passenger_id, u.name AS passenger_name, u.email AS passenger_email,
-               u.lat AS passenger_lat, u.lng as passenger_lng
+      SELECT r.id AS route_id, 
+        r.name AS route_name, 
+        r.origin, 
+        r.destination, 
+        r.driver_id, 
+        ur.user_id AS passenger_id, 
+        u.name AS passenger_name, 
+        u.email AS passenger_email,
+        u.lat AS passenger_lat, 
+        u.lng as passenger_lng
         FROM Routes r
         JOIN Drivers d ON r.driver_id = d.id
         LEFT JOIN Users_Routes ur ON r.id = ur.route_id
         LEFT JOIN Users u ON ur.user_id = u.id
-        WHERE d.user_id = $1;
-      `;
+        WHERE d.user_id = $1 OR r.id IN (SELECT route_id FROM Users_Routes WHERE user_id = $1);`;
   
       const result = await client.query(sqlStatement, [userId]);
   

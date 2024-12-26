@@ -297,7 +297,7 @@ class _CreateRouteScreenState extends State<CreateRouteScreen> {
                 name: routeName,
                 origin: origin,
                 destination: destination,
-                passengers: _passengers
+                passengers: _passengers,
               );
 
               await RoutesService.createRoute(newRoute);

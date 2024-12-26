@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:vanappfront/providers/RouteLocationProvider.dart';
+import 'package:vanappfront/providers/UserRouteLocationProvider.dart';
 import 'package:vanappfront/screens/NavigationScreen.dart';
 import 'package:vanappfront/screens/RegisterScreen.dart';
 import 'package:vanappfront/services/LoginService.dart';
@@ -52,8 +53,11 @@ Future<void> main() async {
   });
 
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => RouteLocationProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => RouteLocationProvider()),
+        ChangeNotifierProvider(create: (context) => UserRouteLocationProvider()),
+      ],
       child: const MyApp(),
     ),
   );

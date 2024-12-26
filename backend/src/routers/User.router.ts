@@ -14,5 +14,7 @@ userRouter.get("/:searchQuery",authenticateMiddleware,UserController.getUsersByQ
 userRouter.post("/isDriver/",authenticateMiddleware,UserController.verifyUserIsDriver);
 userRouter.delete("/routes/",authenticateMiddleware,UserController.deleteUserFromRoute);
 userRouter.get("/:userId/deviceToken",authenticateMiddleware,UserController.getUserDeviceToken);
+userRouter.get("/isDriver/routes/:routeId",authenticateMiddleware,UserController.verifyUserIsRouteDriver);
+userRouter.post("/isDriver/routes/",authenticateMiddleware,UserController.verifyUserIsRoutesDriver);
 
 export {userRouter}

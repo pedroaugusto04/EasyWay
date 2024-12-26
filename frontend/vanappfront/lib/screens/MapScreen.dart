@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:provider/provider.dart';
+import 'package:vanappfront/services/UserService.dart';
 import 'package:vanappfront/widgets/CustomAppBar.dart';
 import '../models/RouteModel.dart';
 import '../providers/RouteLocationProvider.dart';
 import '../services/RoutesService.dart';
-import '../widgets/RouteMapWidget.dart';
+import '../widgets/DriverRouteMapWidget.dart';
+import '../widgets/UserRouteMapWidget.dart';
 import 'CreateRouteScreen.dart';
 
 class MapScreen extends StatefulWidget {
@@ -19,12 +21,40 @@ class _MapScreenState extends State<MapScreen> {
   late final MapController _mapController;
   late Future<List<RouteModel>> _routesFuture = Future.value([]);
   RouteModel? selectedRoute;
+  bool isDriver = false;
+  late Map<String, bool> mapRouteDriver = {};
+  late bool isLoadFinished = false;
 
   @override
   void initState() {
     super.initState();
     _mapController = MapController();
     loadRoutes();
+    verificateDriver(); // verifica se o usuario eh motorista e se eh motorista de cada rota
+  }
+
+  Future<void> verificateDriver() async {
+    await verifyDriver();
+    verifyIsRoutesDriver();
+  }
+
+  Future<void> verifyDriver() async {
+    // verifica se o usuario eh um motorista ativo
+    bool userIsDriver = await UserService.verifyUserIsDriver();
+    setState(() {
+      isDriver = userIsDriver;
+    });
+  }
+
+  Future<void> verifyIsRoutesDriver() async {
+    // mapeia pelo id da rota se o usuario eh motorista ou nao
+    List<RouteModel> routes = await _routesFuture;
+    List<String> routesId = routes.map((route) => route.id).toList();
+    Map<String,bool> mapResult = await UserService.verifyUserIsRoutesDriver(routesId,isDriver);
+    setState(() {
+      mapRouteDriver = mapResult;
+      isLoadFinished = true; // somente deve exibir a pagina apos saber a relacao do usuario em cada rota
+    });
   }
 
   Future<void> loadRoutes() async {
@@ -45,13 +75,12 @@ class _MapScreenState extends State<MapScreen> {
           FutureBuilder<List<RouteModel>>(
             future: _routesFuture,
             builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
+              if (snapshot.connectionState == ConnectionState.waiting || !isLoadFinished) {
                 return const Center(child: CircularProgressIndicator());
               } else if (snapshot.hasError) {
                 return const Center(child: Icon(Icons.error, color: Colors.red));
               } else if (snapshot.hasData) {
                 final routes = snapshot.data!;
-
                 if (selectedRoute == null && routes.isNotEmpty) {
                   // começa selecionando a primeira rota
                   selectedRoute = routes.first;
@@ -71,6 +100,7 @@ class _MapScreenState extends State<MapScreen> {
                           ),
                         ),
                         const SizedBox(height: 16),
+                        if (isDriver)
                         ElevatedButton(
                           onPressed: () async {
                             final bool? result = await Navigator.push(
@@ -109,7 +139,9 @@ class _MapScreenState extends State<MapScreen> {
                   );
                 }
                 // renderiza o mapa com a nova rota
-                return RouteMapWidget(key: ValueKey(selectedRoute!), route: selectedRoute!);
+                return mapRouteDriver[selectedRoute?.id] ?? false ? DriverRouteMapWidget(key: ValueKey(selectedRoute!), route: selectedRoute!)
+                    :
+                UserRouteMapWidget(key: ValueKey(selectedRoute!), route: selectedRoute!);
               } else {
                 return const SizedBox();
               }
@@ -158,12 +190,11 @@ class _MapScreenState extends State<MapScreen> {
 
                   return ElevatedButton.icon(
                     onPressed: () async {
-                      // verifica se o motorista está com uma rota ativa
+                      // verifica se o motorista esta com uma rota ativa
                       if (locationProvider.isTracking) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('Não é possível mudar de rota enquanto o rastreamento estiver ativo. Por favor, '
-                                'finalize a rota primeiro.'),
+                            content: Text('Não é possível mudar de rota enquanto o rastreamento estiver ativo.'),
                             backgroundColor: Colors.black,
                           ),
                         );

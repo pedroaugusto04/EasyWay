@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:vanappfront/services/LoginService.dart';
-
 import '../Exceptions/AuthenticationException.dart';
 import '../models/RouteModel.dart';
 
@@ -22,7 +21,6 @@ class RoutesService {
       final routeJson = json.encode({
         'route': route.toJson(),
       });
-
 
       final response = await http.post(
         url,

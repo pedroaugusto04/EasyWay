@@ -3,10 +3,12 @@ import 'package:geolocator/geolocator.dart';
 import 'package:flutter/foundation.dart';
 import '../helpers/ProximityHelper.dart';
 import '../models/UserModel.dart';
+import '../services/WebSocketService.dart';
 
 class RouteLocationProvider extends ChangeNotifier {
   Position? _currentPosition;
-  StreamSubscription<Position>? _positionStreamSubscription;
+  StreamSubscription<Position>? _positionSubscription;
+  final WebSocketService _webSocketService = WebSocketService();
   bool _isTracking = false;
   List<UserModel> passengersToNotify = [];
 
@@ -21,11 +23,8 @@ class RouteLocationProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  set isTracking(bool isTracking){
-    isTracking = isTracking;
-  }
+  void startTracking(String routeId) async {
 
-  void startTracking() async {
     LocationPermission permission = await Geolocator.checkPermission();
 
     if (permission != LocationPermission.always && permission != LocationPermission.whileInUse) {
@@ -38,25 +37,27 @@ class RouteLocationProvider extends ChangeNotifier {
 
     if (permission == LocationPermission.always || permission == LocationPermission.whileInUse) {
       // inicia o estado de rastreamento
-      _positionStreamSubscription = Geolocator.getPositionStream(
+      _isTracking = true;
+      _webSocketService.connectDriverToRoute(routeId);
+      _positionSubscription = Geolocator.getPositionStream(
         locationSettings: LocationSettings(
           accuracy: LocationAccuracy.high,
           distanceFilter: 1,
         ),
       ).listen((Position position) {
         _currentPosition = position;
+        _webSocketService.sendPosition(_currentPosition!);
         ProximityHelper.checkProximity(position,passengers: passengersToNotify);
         notifyListeners(); // Notifica os ouvintes para atualizar a UI
       });
-
-      _isTracking = true;
-      notifyListeners(); // notifica para atualizar a UI
     }
   }
 
   void stopTracking() {
     // finalizacao da rota
-    _positionStreamSubscription?.cancel();
+    _positionSubscription?.cancel();
+    _webSocketService.stopSendingMessages();
+    _webSocketService.closeConnection();
     currentPosition = null;
     _isTracking = false;
     passengersToNotify = [];
@@ -65,7 +66,7 @@ class RouteLocationProvider extends ChangeNotifier {
 
   @override
   void dispose() {
-    _positionStreamSubscription?.cancel();
+    _positionSubscription?.cancel();
     super.dispose();
   }
 }

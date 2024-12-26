@@ -6,7 +6,7 @@ export class Route {
     origin: string;
     destination: string;
     driver_id: string;
-    passengers?: Array<User>;
+    passengers: Array<User>;
 
     constructor(id: string, name: string, origin: string, destination: string, driver_id: string,passengers: Array<User> = []) {
         this.id = id;

@@ -6,6 +6,8 @@ import '../services/DeviceTokenService.dart';
 import '../services/LoginService.dart';
 import '../services/UserService.dart';
 import 'MapScreen.dart';
+import 'MapScreen.dart';
+import 'ProfileScreen.dart';
 import 'RoutesScreen.dart';
 
 class NavigationScreen extends StatefulWidget {
@@ -37,17 +39,25 @@ class _NavigationScreenState extends State<NavigationScreen> {
     }
   }
 
-  Future<Widget> navigateFromNavBar(int index, BuildContext context) async {
+  Future<Widget> navigateFromNavBar(int index, bool isDriver, BuildContext context) async {
     switch (index) {
       case 0:
-        Widget mapWidget = await _navigationService.navigateFromNavBar(() => const MapScreen(), context);
-        return mapWidget;
+          Widget mapWidget = await _navigationService.navigateFromNavBar(() => const MapScreen(), context);
+          return mapWidget;
       case 1:
-        Widget passengersWidget = await _navigationService.navigateFromNavBar(() => const RoutesScreen(), context);
-        return passengersWidget;
+        if (isDriver){
+          Widget passengersWidget = await _navigationService.navigateFromNavBar(() => const RoutesScreen(), context);
+          return passengersWidget;
+        } else {
+          Widget profileWidget = await _navigationService.navigateFromNavBar(() => const ProfileScreen(),context);
+          return profileWidget;
+        }
+      case 2:
+        Widget profileWidget = await _navigationService.navigateFromNavBar(() => const ProfileScreen(),context);
+        return profileWidget;
       default:
-        Widget mapWidget = await _navigationService.navigateFromNavBar(() => const MapScreen(), context);
-        return mapWidget;
+          Widget mapWidget = await _navigationService.navigateFromNavBar(() => const MapScreen(), context);
+          return mapWidget;
       }
   }
 
@@ -95,10 +105,15 @@ class _NavigationScreenState extends State<NavigationScreen> {
                     icon: Icon(Icons.directions_bus_filled_rounded),
                     label: 'Rotas',
                   ),
+                const NavigationDestination(
+                  icon: Icon(Icons.person),
+                  label: 'Perfil'
+                )
               ],
             ),
             body: FutureBuilder<Widget>(
-              future: navigateFromNavBar(currentPageIndex, context),
+              // snapshot.data -> true se o usuario eh motorista, false caso contrario
+              future: navigateFromNavBar(currentPageIndex,snapshot.data ?? false, context),
               builder: (context, innerSnapshot) {
                 if (innerSnapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());

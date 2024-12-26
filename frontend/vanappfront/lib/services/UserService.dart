@@ -132,12 +132,103 @@ class UserService {
 
       final responseData = json.decode(response.body);
       final isDriver = responseData["isDriver"] ?? false;
+
       return isDriver;
 
     } catch (e) {
       print('Erro ao verificar se é motorista: $e');
       return false;
     }
+  }
+
+  static Future<bool> verifyUserIsRouteDriver(String routeId) async {
+    try {
+      final url = Uri.parse('http://192.168.1.10:3000/users/isDriver/routes/$routeId');
+
+      String? jwtToken = await _secureStorage.read(key:"jwtToken");
+
+      if (jwtToken == null || LoginService.isTokenExpired(jwtToken)) {
+        throw AuthenticationException();
+      }
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': jwtToken,
+        },
+      );
+
+      if (response.statusCode != 200){
+        print('Falha ao verificar se o usuario eh o motorista da rota: ${response.statusCode}');
+        return false;
+      }
+
+      final responseData = json.decode(response.body);
+      final isDriver = responseData["isDriver"] ?? false;
+      return isDriver;
+
+    } catch (e) {
+      print('Erro ao verificar se o usuario eh motorista da rota: $e');
+      return false;
+    }
+  }
+
+  static Future<Map<String, bool>> verifyUserIsRoutesDriver(List<String> routesId, bool isDriver) async {
+    Map<String, bool> routeDriverMap = {};
+    if (!isDriver){
+      // caso o usuario nao seja motorista
+      for (var routeId in routesId) {
+        routeDriverMap[routeId] = false;
+      }
+      return routeDriverMap;
+    }
+    try {
+      final url = Uri.parse('http://192.168.1.10:3000/users/isDriver/routes/');
+
+      String? jwtToken = await _secureStorage.read(key: "jwtToken");
+
+      if (jwtToken == null || LoginService.isTokenExpired(jwtToken)) {
+        throw AuthenticationException();
+      }
+
+      final body = json.encode({
+        'routes': routesId,
+      });
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': jwtToken,
+        },
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        final List<dynamic> isDriverResults = responseData['isDriverResults'];
+
+        for (var result in isDriverResults) {
+          routeDriverMap[result['routeId']] = result['isRouteDriver'] ?? false;
+        }
+
+      } else {
+        print('Falha ao verificar se o usuario eh o motorista das rotas: ${response.statusCode}');
+
+        for (var routeId in routesId) {
+          routeDriverMap[routeId] = false;
+        }
+      }
+    } catch (e) {
+      print('Erro ao verificar se o usuario eh motorista das rotas: $e');
+
+      for (var routeId in routesId) {
+        routeDriverMap[routeId] = false;
+      }
+    }
+
+    return routeDriverMap;
   }
 
   static Future<bool> deleteUserFromRoute(String passengerId,String routeId) async {

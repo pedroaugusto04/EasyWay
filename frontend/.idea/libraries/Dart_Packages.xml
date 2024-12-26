@@ -639,6 +639,20 @@
             </list>
           </value>
         </entry>
+        <entry key="web_socket">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/web_socket-0.1.6/lib" />
+            </list>
+          </value>
+        </entry>
+        <entry key="web_socket_channel">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/web_socket_channel-3.0.1/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="win32">
           <value>
             <list>
@@ -757,6 +771,8 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/vector_math-2.1.4/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/vm_service-14.3.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/web-1.1.0/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/web_socket-0.1.6/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/web_socket_channel-3.0.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/win32-5.9.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/wkt_parser-2.0.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/xdg_directories-1.1.0/lib" />

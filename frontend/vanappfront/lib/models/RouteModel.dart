@@ -6,6 +6,7 @@ class RouteModel {
   final String origin;
   final String destination;
   final List<UserModel> passengers;
+  final bool userIsDriver;
 
   RouteModel({
     required this.id,
@@ -13,6 +14,7 @@ class RouteModel {
     required this.origin,
     required this.destination,
     required this.passengers,
+    this.userIsDriver = false
   });
 
   factory RouteModel.fromJson(Map<String, dynamic> json) {
@@ -26,6 +28,7 @@ class RouteModel {
       origin: json['origin'] ?? '',
       destination: json['destination'] ?? '',
       passengers: passengersFromJson,
+      userIsDriver: false
     );
   }
 
@@ -36,6 +39,7 @@ class RouteModel {
       'origin': origin,
       'destination': destination,
       'passengers': passengers.map((passenger) => passenger.toJson()).toList(),
+      'userIsDriver': userIsDriver
     };
   }
 }

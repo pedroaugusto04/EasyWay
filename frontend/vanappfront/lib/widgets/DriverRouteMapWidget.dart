@@ -6,17 +6,23 @@ import 'package:provider/provider.dart';
 import '../models/RouteModel.dart';
 import '../models/UserModel.dart';
 import '../providers/RouteLocationProvider.dart';
+import '../services/WebSocketService.dart';
 
-class RouteMapWidget extends StatefulWidget {
+class DriverRouteMapWidget extends StatefulWidget {
   final RouteModel route;
 
-  RouteMapWidget({super.key, required this.route});
+  DriverRouteMapWidget({super.key, required this.route});
 
   @override
-  _RouteMapWidgetState createState() => _RouteMapWidgetState();
+  _DriverRouteMapWidgetState createState() => _DriverRouteMapWidgetState();
 }
 
-class _RouteMapWidgetState extends State<RouteMapWidget> {
+class _DriverRouteMapWidgetState extends State<DriverRouteMapWidget> {
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -49,7 +55,7 @@ class _RouteMapWidgetState extends State<RouteMapWidget> {
       List<UserModel> passengersToNotify = widget.route.passengers;
       locationProvider.setCurrentPassengers(passengersToNotify);
 
-      locationProvider.startTracking();
+      locationProvider.startTracking(widget.route.id);
     }
 
     if (permission == LocationPermission.deniedForever) {
