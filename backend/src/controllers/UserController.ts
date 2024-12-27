@@ -1,10 +1,7 @@
-import dotenv from "dotenv";
 import { Request, Response } from 'express';
 import { UserService } from "../services/UserService";
 import { getUserIdByToken } from "../utils/jwtAuth";
 import { hashPassword } from "../utils/bcrypt";
-
-dotenv.config();
 
 export class UserController {
 

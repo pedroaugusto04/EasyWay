@@ -1,11 +1,8 @@
-import dotenv from "dotenv";
 import { Request, Response } from 'express';
 import { LoginService } from "../services/LoginService";
 import { comparePasswords } from "../utils/bcrypt";
 import { User } from "../models/User";
 import { generateToken } from "../utils/jwtAuth";
-
-dotenv.config();
 
 export class LoginController {
 

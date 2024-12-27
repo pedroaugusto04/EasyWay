@@ -1,11 +1,8 @@
-import dotenv from "dotenv";
 import { Request, Response } from 'express';
 import { getUserIdByToken } from "../utils/jwtAuth";
 import { RoutesService } from "../services/RoutesService";
 import { DriverService } from "../services/DriverService";
 import { Route } from "../models/Route";
-
-dotenv.config();
 
 export class RoutesController {
 

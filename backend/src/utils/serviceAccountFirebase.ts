@@ -1,6 +1,4 @@
-import * as dotenv from 'dotenv';
-
-dotenv.config();
+import '../config/envConfig'
 
 interface ServiceAccount {
     type: string;

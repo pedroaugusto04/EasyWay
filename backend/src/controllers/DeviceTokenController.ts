@@ -1,9 +1,6 @@
-import dotenv from "dotenv";
 import { Request, Response } from 'express';
 import { DeviceTokenService } from "../services/DeviceTokenService";
 import { getUserIdByToken } from "../utils/jwtAuth";
-
-dotenv.config();
 
 export class DeviceTokenController {
 

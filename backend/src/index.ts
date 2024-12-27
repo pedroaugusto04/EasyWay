@@ -1,7 +1,6 @@
 import express from 'express';
 import cors from 'cors';
 import { notificationRouter } from './routers/Notification.router';
-import dotenv from 'dotenv';
 import { loginRouter } from './routers/Login.router';
 import { deviceTokenRouter } from './routers/DeviceToken.router';
 import { authenticateMiddleware } from './middlewares/authMiddleware';
@@ -10,8 +9,7 @@ import { routesRouter } from './routers/Routes.router';
 import http from 'http';
 import WebSocket, { WebSocketServer } from 'ws';
 import { connections } from './webSocket/connection';
-
-dotenv.config();
+import './config/envConfig';
 
 const app = express();
 const server = http.createServer(app);
