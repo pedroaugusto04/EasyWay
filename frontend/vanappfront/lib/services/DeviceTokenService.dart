@@ -1,6 +1,6 @@
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-
 import '../Exceptions/AuthenticationException.dart';
 import 'LoginService.dart';
 
@@ -15,7 +15,8 @@ class DeviceTokenService {
         throw ArgumentError('deviceToken não pode ser nulo');
       }
 
-      final url = Uri.parse('http://192.168.1.10:3000/deviceToken');
+      final apiUrl = dotenv.env['API_URL'];
+      final url = Uri.parse('$apiUrl/deviceToken');
 
       final body = json.encode({
         'deviceToken': deviceToken,

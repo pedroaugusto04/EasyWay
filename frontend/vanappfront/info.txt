@@ -1,3 +1,24 @@
 Consideracoes para desenvolvimento:
 
 Ao manipular rotas, utilizar NavigationService ( encapsula a lógica de verificação de sessão / redirecionamento para login )
+
+Rodar o projeto:
+
+Desenvolvimento:
+flutter run --flavor dev --dart-define=FLAVOR=dev
+
+Producao:
+Para debug:
+flutter run --flavor dev --dart-define=FLAVOR=prod
+
+Para teste:
+flutter run --flavor prod --dart-define=FLAVOR=prod
+
+
+Buildar o apk:
+
+Desenvolvimento:
+flutter build apk --flavor dev --dart-define=FLAVOR=dev --debug
+
+Producao:
+flutter build apk --flavor prod --dart-define=FLAVOR=prod --debug

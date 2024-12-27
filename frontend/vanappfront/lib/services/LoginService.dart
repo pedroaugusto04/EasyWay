@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -11,7 +12,9 @@ class LoginService {
   static final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
 
   static Future<void> login(String email, String password) async {
-    final url = Uri.parse('http://192.168.1.10:3000/login');
+    final apiUrl = dotenv.env['API_URL'];
+    final url = Uri.parse('$apiUrl/login');
+    print(url);
 
     final body = json.encode({
       'email': email,

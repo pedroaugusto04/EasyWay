@@ -11,8 +11,20 @@ import 'package:vanappfront/services/LoginService.dart';
 import 'package:vanappfront/services/NavigationService.dart';
 import 'package:vanappfront/widgets/CustomAppBar.dart';
 import 'firebase_options.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
+  // carrega dotenv conforme o ambiente
+  String envFile = '.env';
+  const String flavor = String.fromEnvironment('FLAVOR');
+  if (flavor == 'dev') {
+    envFile = '.env.dev';
+  } else if (flavor == 'prod') {
+    envFile = '.env.prod';
+  }
+
+  await dotenv.load(fileName: envFile);
+
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,

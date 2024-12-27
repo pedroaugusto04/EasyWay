@@ -28,6 +28,10 @@ app.use('/deviceToken', authenticateMiddleware, deviceTokenRouter);
 app.use('/users',userRouter);
 app.use('/routes', authenticateMiddleware, routesRouter);
 
+app.get('/ping', (req, res) => {
+  res.send('API online');
+});
+
 const wss = new WebSocketServer({ server });
 
 wss.on('connection', (ws: WebSocket, req) => {

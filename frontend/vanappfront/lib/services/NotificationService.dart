@@ -1,3 +1,4 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -22,7 +23,8 @@ class NotificationService {
       return;
     }
     try {
-      final url = Uri.parse('http://192.168.1.10:3000/notification/$deviceToken');
+      final apiUrl = dotenv.env['API_URL'];
+      final url = Uri.parse('$apiUrl/notification/$deviceToken');
 
       String? jwtToken = await _secureStorage.read(key: "jwtToken");
 

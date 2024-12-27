@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:vanappfront/services/LoginService.dart';
@@ -10,7 +11,8 @@ class RoutesService {
 
   static Future<void> createRoute(RouteModel route) async {
     try {
-      final url = Uri.parse('http://192.168.1.10:3000/routes/');
+      final apiUrl = dotenv.env['API_URL'];
+      final url = Uri.parse('$apiUrl/routes/');
 
       String? jwtToken = await _secureStorage.read(key: "jwtToken");
 
@@ -43,7 +45,8 @@ class RoutesService {
   static Future<List<RouteModel>?> getRoutes() async {
 
     try {
-      final url = Uri.parse('http://192.168.1.10:3000/routes/');
+      final apiUrl = dotenv.env['API_URL'];
+      final url = Uri.parse('$apiUrl/routes/');
 
       String? jwtToken = await _secureStorage.read(key: "jwtToken");
 
@@ -81,7 +84,8 @@ class RoutesService {
   static Future<List<RouteModel>?> getRoutesDrivenByUser() async {
 
     try {
-      final url = Uri.parse('http://192.168.1.10:3000/routes/users/driven');
+      final apiUrl = dotenv.env['API_URL'];
+      final url = Uri.parse('$apiUrl/routes/users/driven');
 
       String? jwtToken = await _secureStorage.read(key: "jwtToken");
 
@@ -117,7 +121,8 @@ class RoutesService {
 
   static Future<bool> deleteRoute(String routeId) async {
     try {
-      final url = Uri.parse('http://192.168.1.10:3000/routes/${routeId}');
+      final apiUrl = dotenv.env['API_URL'];
+      final url = Uri.parse('$apiUrl/routes/${routeId}');
 
       String? jwtToken = await _secureStorage.read(key:"jwtToken");
 
@@ -148,7 +153,8 @@ class RoutesService {
 
   static Future<void> addPassengerToRoute(String routeId, String passengerId) async {
     try {
-      final url = Uri.parse('http://192.168.1.10:3000/routes/${routeId}/passengers/${passengerId}');
+      final apiUrl = dotenv.env['API_URL'];
+      final url = Uri.parse('$apiUrl/routes/${routeId}/passengers/${passengerId}');
 
       String? jwtToken = await _secureStorage.read(key:"jwtToken");
 

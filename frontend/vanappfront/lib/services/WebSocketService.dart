@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'dart:async';
@@ -8,12 +9,14 @@ class WebSocketService {
   Timer? _timer;
 
   void connectDriverToRoute(String routeId) {
-    final String url = 'ws://192.168.1.10:3000/driver/$routeId';
+    final apiUrl = dotenv.env['API_URL'];
+    final String url = 'ws://$apiUrl/driver/$routeId';
     channel = WebSocketChannel.connect(Uri.parse(url));
   }
 
   void connectToRoute(String routeId) {
-    final String url = 'ws://192.168.1.10:3000/passenger/$routeId';
+    final apiUrl = dotenv.env['API_URL'];
+    final String url = 'ws://$apiUrl/passenger/$routeId';
     try {
       channel = WebSocketChannel.connect(Uri.parse(url));
     } catch (e) {

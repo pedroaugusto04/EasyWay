@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import '../Exceptions/AuthenticationException.dart';
@@ -14,7 +15,8 @@ class UserService {
 
   static Future<List<UserModel>?> getUsers() async {
     try {
-      final url = Uri.parse('http://192.168.1.10:3000/users');
+      final apiUrl = dotenv.env['API_URL'];
+      final url = Uri.parse('${apiUrl}/users');
 
       String? jwtToken = await _secureStorage.read(key: "jwtToken");
 
@@ -47,7 +49,8 @@ class UserService {
 
   static Future<UserModel?> getUser() async {
     try {
-      final url = Uri.parse('http://192.168.1.10:3000/users/userInfo');
+      final apiUrl = dotenv.env['API_URL'];
+      final url = Uri.parse('$apiUrl/users/userInfo');
 
       String? jwtToken = await _secureStorage.read(key: "jwtToken");
 
@@ -81,7 +84,8 @@ class UserService {
 
   static Future<bool> createUser(RegisterUserModel user) async {
     try {
-      final url = Uri.parse('http://192.168.1.10:3000/users/');
+      final apiUrl = dotenv.env['API_URL'];
+      final url = Uri.parse('$apiUrl/users/');
 
       final userJson = json.encode({
         'user': user.toJson(),
@@ -110,7 +114,8 @@ class UserService {
 
   static Future<List<UserModel>?> getUsersByQuery(String searchQuery) async {
     try {
-      final url = Uri.parse('http://192.168.1.10:3000/users/$searchQuery');
+      final apiUrl = dotenv.env['API_URL'];
+      final url = Uri.parse('$apiUrl/users/$searchQuery');
 
       String? jwtToken = await _secureStorage.read(key: "jwtToken");
 
@@ -143,7 +148,8 @@ class UserService {
 
   static Future<bool> verifyUserIsDriver() async {
     try {
-      final url = Uri.parse('http://192.168.1.10:3000/users/isDriver/');
+      final apiUrl = dotenv.env['API_URL'];
+      final url = Uri.parse('$apiUrl/users/isDriver/');
 
       String? jwtToken = await _secureStorage.read(key:"jwtToken");
 
@@ -176,7 +182,8 @@ class UserService {
 
   static Future<bool> verifyUserIsRouteDriver(String routeId) async {
     try {
-      final url = Uri.parse('http://192.168.1.10:3000/users/isDriver/routes/$routeId');
+      final apiUrl = dotenv.env['API_URL'];
+      final url = Uri.parse('$apiUrl/users/isDriver/routes/$routeId');
 
       String? jwtToken = await _secureStorage.read(key:"jwtToken");
 
@@ -217,7 +224,8 @@ class UserService {
       return routeDriverMap;
     }
     try {
-      final url = Uri.parse('http://192.168.1.10:3000/users/isDriver/routes/');
+      final apiUrl = dotenv.env['API_URL'];
+      final url = Uri.parse('$apiUrl/users/isDriver/routes/');
 
       String? jwtToken = await _secureStorage.read(key: "jwtToken");
 
@@ -266,7 +274,8 @@ class UserService {
 
   static Future<bool> deleteUserFromRoute(String passengerId,String routeId) async {
     try {
-      final url = Uri.parse('http://192.168.1.10:3000/users/routes/');
+      final apiUrl = dotenv.env['API_URL'];
+      final url = Uri.parse('$apiUrl/users/routes/');
 
       String? jwtToken = await _secureStorage.read(key:"jwtToken");
 
@@ -301,7 +310,8 @@ class UserService {
 
   static Future<String?> getUserDeviceToken(UserModel user) async {
     try {
-      final url = Uri.parse('http://192.168.1.10:3000/users/${user.id}/deviceToken');
+      final apiUrl = dotenv.env['API_URL'];
+      final url = Uri.parse('$apiUrl/users/${user.id}/deviceToken');
 
       String? jwtToken = await _secureStorage.read(key: "jwtToken");
 
