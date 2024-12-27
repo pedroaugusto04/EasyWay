@@ -13,7 +13,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         // enquanto estiver carregando
         if (snapshot.connectionState == ConnectionState.waiting) {
           return AppBar(
-            title: const Text('VanApp'),
+            title: const Text('EasyWay'),
             actions: const [
               Padding(
                 padding: EdgeInsets.all(8.0),
@@ -27,13 +27,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         if (snapshot.hasError || !snapshot.hasData || snapshot.data == false) {
           // caso nao esteja logado
           return AppBar(
-            title: const Text('VanApp'),
+            title: const Text('EasyWay'),
           );
         }
 
         // caso esteja logado
         return AppBar(
-          title: const Text('VanApp'),
+          title: const Text('EasyWay'),
           actions: [
             IconButton(
               icon: const Icon(Icons.exit_to_app),

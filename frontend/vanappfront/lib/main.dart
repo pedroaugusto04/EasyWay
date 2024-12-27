@@ -70,7 +70,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'VanApp',
+      title: 'EasyWay',
       theme: ThemeData(
         colorScheme: const ColorScheme.light(
           primary: Color(0xFF007BFF),

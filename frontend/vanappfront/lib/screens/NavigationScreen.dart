@@ -76,7 +76,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
-            appBar: AppBar(title: const Text('VanApp')),
+            appBar: AppBar(title: const Text('EasyWay')),
             body: const Center(child: CircularProgressIndicator()),
           );
         } else if (snapshot.hasError || !snapshot.hasData) {
