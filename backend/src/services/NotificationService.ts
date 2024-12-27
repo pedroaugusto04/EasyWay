@@ -1,9 +1,10 @@
 import * as admin from 'firebase-admin';
 
-const serviceAccount = require('../../vanAppFirebase.json');
+import serviceAccountFirebase from '../utils/serviceAccountFirebase';
+import { ServiceAccount } from 'firebase-admin';
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+  credential: admin.credential.cert(serviceAccountFirebase as ServiceAccount),
 });
 
 export class NotificationService {
