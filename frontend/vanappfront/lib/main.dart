@@ -155,22 +155,22 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Padding(
             padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 60.0),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,  // Modificado para começar do topo
+              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: 50),  // Espaço entre o topo e o conteúdo
+                SizedBox(height: 50),
                 Container(
                   width: 180,
                   height: 180,
                   decoration: BoxDecoration(
-                    color: Colors.yellow, // Cor de fundo
-                    borderRadius: BorderRadius.circular(50), // Bordas arredondadas (opcional)
+                    color: Colors.yellow,
+                    borderRadius: BorderRadius.circular(50),
                   ),
                   child: Image.asset(
-                    'assets/iconEasyWay.png', // Caminho para a imagem
+                    'assets/iconEasyWay.png',
                     width: 180,
                     height: 180,
-                    fit: BoxFit.cover, // Ajusta a imagem para preencher o Container
+                    fit: BoxFit.cover,
                   ),
                 ),
                 SizedBox(height: 50),
