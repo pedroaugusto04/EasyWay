@@ -151,53 +151,71 @@ class _LoginScreenState extends State<LoginScreen> {
       },
       child: Scaffold(
         appBar: CustomAppBar(),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              TextField(
-                controller: _emailController,
-                decoration: InputDecoration(
-                  labelText: 'E-mail',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _passwordController,
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: 'Senha',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 32),
-              ElevatedButton(
-                onPressed: _login,
-                style: ElevatedButton.styleFrom(
-                  minimumSize: Size(double.infinity, 50),
-                  backgroundColor: Theme.of(context).primaryColor,
-                ),
-                child: const Text(
-                  'Entrar',
-                  style: TextStyle(
-                    color: Colors.white,
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 60.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,  // Modificado para começar do topo
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(height: 50),  // Espaço entre o topo e o conteúdo
+                Container(
+                  width: 180,
+                  height: 180,
+                  decoration: BoxDecoration(
+                    color: Colors.yellow, // Cor de fundo
+                    borderRadius: BorderRadius.circular(50), // Bordas arredondadas (opcional)
+                  ),
+                  child: Image.asset(
+                    'assets/iconEasyWay.png', // Caminho para a imagem
+                    width: 180,
+                    height: 180,
+                    fit: BoxFit.cover, // Ajusta a imagem para preencher o Container
                   ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => RegisterScreen()),
-                  );
-                },
-                child: const Text('Ainda não tem uma conta? Registre-se aqui'),
-              ),
-            ],
+                SizedBox(height: 50),
+                TextField(
+                  controller: _emailController,
+                  decoration: InputDecoration(
+                    labelText: 'E-mail',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _passwordController,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    labelText: 'Senha',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 32),
+                ElevatedButton(
+                  onPressed: _login,
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size(double.infinity, 50),
+                    backgroundColor: Theme.of(context).primaryColor,
+                  ),
+                  child: const Text(
+                    'Entrar',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => RegisterScreen()),
+                    );
+                  },
+                  child: const Text('Ainda não tem uma conta? Registre-se aqui'),
+                ),
+              ],
+            ),
           ),
         ),
       ),
