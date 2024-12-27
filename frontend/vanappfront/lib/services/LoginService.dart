@@ -28,6 +28,9 @@ class LoginService {
       body: body,
     );
 
+
+    print(response);
+
     if (response.statusCode != 200){
       throw Exception("Falha ao realizar login: ${response.statusCode}");
     }
