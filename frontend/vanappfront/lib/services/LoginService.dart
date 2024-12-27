@@ -14,7 +14,6 @@ class LoginService {
   static Future<void> login(String email, String password) async {
     final apiUrl = dotenv.env['API_URL'];
     final url = Uri.parse('$apiUrl/login');
-    print(url);
 
     final body = json.encode({
       'email': email,
