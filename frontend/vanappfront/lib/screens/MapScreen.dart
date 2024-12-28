@@ -115,6 +115,7 @@ class _MapScreenState extends State<MapScreen> {
                             if (result == true){
                               setState(() {
                                 loadRoutes();
+                                verificateDriver();
                               });
                             }
 
