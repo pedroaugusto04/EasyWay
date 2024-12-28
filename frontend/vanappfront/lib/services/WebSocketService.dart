@@ -9,14 +9,16 @@ class WebSocketService {
   Timer? _timer;
 
   void connectDriverToRoute(String routeId) {
-    final apiUrl = dotenv.env['API_URL'];
-    final String url = 'ws://$apiUrl/driver/$routeId';
+    final apiUrlWebSocket = dotenv.env['API_URL_WEB_SOCKET'];
+    final String url = 'ws://$apiUrlWebSocket/driver/$routeId';
+
+    print(url);
     channel = WebSocketChannel.connect(Uri.parse(url));
   }
 
   void connectToRoute(String routeId) {
-    final apiUrl = dotenv.env['API_URL'];
-    final String url = 'ws://$apiUrl/passenger/$routeId';
+    final apiUrlWebSocket = dotenv.env['API_URL_WEB_SOCKET'];
+    final String url = 'ws://$apiUrlWebSocket/passenger/$routeId';
     try {
       channel = WebSocketChannel.connect(Uri.parse(url));
     } catch (e) {
