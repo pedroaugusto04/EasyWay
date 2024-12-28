@@ -26,12 +26,12 @@ class _UserRouteMapWidgetState extends State<UserRouteMapWidget> {
   }
 
 
-  void _startTracking(BuildContext context){
+  void _startTracking(BuildContext context) {
     final userLocationProvider = Provider.of<UserRouteLocationProvider>(context,listen: false);
     userLocationProvider.startTracking(widget.route.id,context);
   }
 
-  void _stopTracking(){
+  void _stopTracking() {
     final userLocationProvider = Provider.of<UserRouteLocationProvider>(context,listen: false);
 
     userLocationProvider.stopTracking();
@@ -205,12 +205,12 @@ class _UserRouteMapWidgetState extends State<UserRouteMapWidget> {
                     child: Text('Cancelar'),
                   ),
                   TextButton(
-                    onPressed: () {
+                    onPressed: () async {
                       Navigator.of(context).pop(); // Fecha o modal
                       if (userLocationProvider.isTracking) {
-                        _stopTracking();
+                          _stopTracking();
                       } else {
-                        _startTracking(context);
+                         _startTracking(context);
                       }
                     },
                     child: Text('Confirmar'),

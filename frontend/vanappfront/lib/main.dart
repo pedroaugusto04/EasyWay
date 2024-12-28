@@ -78,6 +78,7 @@ Future<void> main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
+  static final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
   @override
   Widget build(BuildContext context) {
@@ -95,6 +96,7 @@ class MyApp extends StatelessWidget {
           backgroundColor: Colors.grey[300],
         ),
       ),
+      scaffoldMessengerKey: scaffoldMessengerKey,
       home: FutureBuilder<bool>(
         future: LoginService.isUserLoggedIn(),
         builder: (context, snapshot) {

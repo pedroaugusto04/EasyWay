@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/foundation.dart';
+import '../main.dart';
 import '../services/WebSocketService.dart';
 
 class UserRouteLocationProvider extends ChangeNotifier {
@@ -11,16 +12,18 @@ class UserRouteLocationProvider extends ChangeNotifier {
   StreamSubscription? _driverPositionSubscription;
   final WebSocketService _webSocketService = WebSocketService();
   bool _isTracking = false;
+  bool _isDriverTracking = true;
 
   Position? get currentDriverPosition => _currentDriverPosition;
   bool get isTracking => _isTracking;
+  bool get isDriverTracking => _isDriverTracking;
 
   set currentDriverPosition(Position? position) {
     _currentDriverPosition = position;
     notifyListeners();
   }
 
-  void startTracking(String routeId, BuildContext context) async {
+  void startTracking(String routeId, BuildContext context) {
     _webSocketService.connectToRoute(routeId);  // Espera a conexão ser estabelecida
     _isTracking = true;
     notifyListeners();
@@ -30,12 +33,7 @@ class UserRouteLocationProvider extends ChangeNotifier {
       final data = jsonDecode(message);
       // Verifica se há erro na resposta
       if (data['error'] != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Não foi possível rastrear o motorista. A rota não está em andamento.'),
-          ),
-        );
-        stopTracking();
+        stopTracking(isDriverTracking: false);
         return;
       }
 
@@ -62,12 +60,17 @@ class UserRouteLocationProvider extends ChangeNotifier {
     );
   }
 
-  void stopTracking() {
+   void stopTracking({bool isDriverTracking = true}) {
     _driverPositionSubscription?.cancel();
     _webSocketService.stopSendingMessages();
     _webSocketService.closeConnection();
     _isTracking = false;
     currentDriverPosition = null;
+    _isDriverTracking = isDriverTracking;
+    if (!isDriverTracking) {
+      MyApp.scaffoldMessengerKey.currentState?.showSnackBar(
+        SnackBar(content: Text('Não foi possível rastrear o motorista. A rota não está em andamento.')));
+    }
     notifyListeners();
   }
 
