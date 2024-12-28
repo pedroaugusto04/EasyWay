@@ -1,6 +1,8 @@
+import fs from 'fs'; 
 import { Pool } from 'pg';
 
 const environment: 'dev' | 'prod' = (process.env.NODE_ENV || 'dev') as 'dev' | 'prod'; 
+
 
 const config = {
   dev: {
@@ -17,8 +19,8 @@ const config = {
     password: process.env.PG_PASSWORD,
     port: parseInt(process.env.PG_PORT || '5432'),
     ssl: {
-      rejectUnauthorized: false,
-    },
+      ca: fs.readFileSync("ca.pem")
+    }
   },
 };
 
