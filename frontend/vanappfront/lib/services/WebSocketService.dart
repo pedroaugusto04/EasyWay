@@ -11,7 +11,7 @@ class WebSocketService {
   void connectDriverToRoute(String routeId) {
     final apiUrlWebSocket = dotenv.env['API_URL_WEB_SOCKET'];
     final String url = 'ws://$apiUrlWebSocket/driver/$routeId';
-    print(url);
+
     channel = WebSocketChannel.connect(Uri.parse(url));
   }
 

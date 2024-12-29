@@ -50,6 +50,7 @@ wss.on('connection', (ws: WebSocket, req) => {
     });
 
     ws.on('close', () => {
+      sendMessageTurnOffToPassengers(routeId); // sinaliza para os passageiros que a rota nao esta mais em andamento
       connections.delete(routeId); // desconecta a rota
       ws.close();
     });
@@ -94,6 +95,21 @@ function sendMessageToPassengers(message: string, routeId: string) {
       };
 
       passengerWs.send(JSON.stringify(response));
+
+    } catch (err) {
+      console.error(`Erro ao enviar mensagem para o passageiro da rota ${routeId}:`, err);
+    }
+  })
+}
+
+function sendMessageTurnOffToPassengers(routeId: string) {
+  // sinaliza para os passageiros que a rota nao esta mais em andamento
+  const passengersWs = connections.get(routeId);
+  if (!passengersWs || passengersWs.length === 0) return;
+
+  connections.get(routeId)?.forEach(passengerWs => {
+    try {
+      passengerWs.send(JSON.stringify({ error: 'A rota nao esta mais em andamento' }));
 
     } catch (err) {
       console.error(`Erro ao enviar mensagem para o passageiro da rota ${routeId}:`, err);

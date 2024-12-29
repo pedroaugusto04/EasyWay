@@ -42,7 +42,7 @@ class RouteLocationProvider extends ChangeNotifier {
       _positionSubscription = Geolocator.getPositionStream(
         locationSettings: LocationSettings(
           accuracy: LocationAccuracy.medium,
-          distanceFilter: 100,
+          distanceFilter: 50, // atualiza de 50 em 50 metros
         ),
       ).listen((Position position) {
         _currentPosition = position;
