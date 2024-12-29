@@ -177,7 +177,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   width: 180,
                   height: 180,
                   decoration: BoxDecoration(
-                    color: Colors.yellow,
+                    color: Theme.of(context).primaryColor,
                     borderRadius: BorderRadius.circular(50),
                   ),
                   child: Image.asset(

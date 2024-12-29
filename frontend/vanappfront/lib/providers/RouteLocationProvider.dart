@@ -41,8 +41,8 @@ class RouteLocationProvider extends ChangeNotifier {
       _webSocketService.connectDriverToRoute(routeId);
       _positionSubscription = Geolocator.getPositionStream(
         locationSettings: LocationSettings(
-          accuracy: LocationAccuracy.high,
-          distanceFilter: 1,
+          accuracy: LocationAccuracy.medium,
+          distanceFilter: 100,
         ),
       ).listen((Position position) {
         _currentPosition = position;
