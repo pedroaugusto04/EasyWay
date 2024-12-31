@@ -87,7 +87,6 @@ class RouteLocationProvider extends ChangeNotifier {
           speed: 0,
           speedAccuracy: 0);
       _currentPosition = position;
-
       onUpdatePosition(position);
     });
   }
