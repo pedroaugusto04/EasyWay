@@ -55,7 +55,7 @@ class _DriverRouteMapWidgetState extends State<DriverRouteMapWidget> {
       List<UserModel> passengersToNotify = widget.route.passengers;
       locationProvider.setCurrentPassengers(passengersToNotify);
 
-      locationProvider.startTracking(widget.route.id);
+      locationProvider.startTracking(widget.route.id,context);
     }
 
     if (permission == LocationPermission.deniedForever) {

@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/foundation.dart';
 import 'package:location/location.dart' as loc;
 import 'package:permission_handler/permission_handler.dart';
+import 'package:vanappfront/widgets/BackgroundPermissionHelper.dart';
 import '../helpers/ProximityHelper.dart';
 import '../models/UserModel.dart';
 import '../services/WebSocketService.dart';
@@ -27,37 +29,21 @@ class RouteLocationProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void startTracking(String routeId) async {
+  void startTracking(String routeId,BuildContext context) async {
     _location = new loc.Location();
 
-    bool serviceEnabled = await _location.serviceEnabled();
-    if (!serviceEnabled){
-      serviceEnabled = await _location.requestService();
-    }
-    if (!serviceEnabled){
-      return;
-    }
+    PermissionStatus backgroundPermission = await Permission.locationAlways.request();
 
-    loc.PermissionStatus permissionGranted = await _location.hasPermission();
-    if (permissionGranted == loc.PermissionStatus.denied){
-      permissionGranted = await _location.requestPermission();
-    }
-    if (permissionGranted != loc.PermissionStatus.granted) {
-      return;
-    }
-
-    PermissionStatus backgroundPermission = await Permission.locationWhenInUse.request();
-
-    if (backgroundPermission.isDenied) {
-      backgroundPermission = await Permission.locationAlways.request();
-    }
-
-    if (backgroundPermission.isDenied) {
-      /* caso nao tenha permissao para rodar em segundo plano,
-      roda enquanto o aplicativo estiver aberto
-       */
-      runInForeground(routeId);
-      return;
+    if (!backgroundPermission.isGranted) {
+      // caso o usuario tenha permitido apenas durante o uso do app, ainda deve ser possivel rastrear
+      PermissionStatus permissionStatusInAppUse = await Permission.locationWhenInUse.status;
+      if (permissionStatusInAppUse.isDenied) {
+        // se ate a permissao durante o app for negada, nao pode rastrear
+        return;
+      } else {
+        // alerta que pode apresentar problemas no rastreamento em segundo plano
+        BackgroundPermissionHelper.show(context);
+      }
     }
 
     _isTracking = true;
