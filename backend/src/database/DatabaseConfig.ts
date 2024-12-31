@@ -3,7 +3,6 @@ import { Pool } from 'pg';
 
 const environment: 'development' | 'production' = (process.env.NODE_ENV || 'development') as 'development' | 'production'; 
 
-
 const config = {
   development: {
     user: process.env.PG_USER,

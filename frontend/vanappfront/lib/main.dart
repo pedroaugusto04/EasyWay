@@ -20,6 +20,7 @@ Future<void> main() async {
   if (flavor == 'dev') {
     envFile = '.env.dev';
   } else if (flavor == 'prod') {
+
     envFile = '.env.prod';
   }
 
@@ -39,11 +40,28 @@ Future<void> main() async {
   );
 
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+  // canal para notificacoes personalizadas
+  const AndroidNotificationChannel channel = AndroidNotificationChannel(
+    'notification_channel',
+    'Custom Notification',
+    description: 'Canal para notificar o usuário quando o motorista se aproxima',
+    importance: Importance.high,
+    sound: RawResourceAndroidNotificationSound('notification_sound'),
+  );
+
+  // cria o canal
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+      AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(channel);
+
   const AndroidInitializationSettings initializationSettingsAndroid =
   AndroidInitializationSettings('@mipmap/ic_launcher');
 
   final InitializationSettings initializationSettings =
   InitializationSettings(android: initializationSettingsAndroid);
+
   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
   FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
@@ -54,10 +72,11 @@ Future<void> main() async {
         message.notification!.body,
         const NotificationDetails(
           android: AndroidNotificationDetails(
-            'default',
-            'default',
+            'notification_channel',
+            'Custom Notification',
             importance: Importance.max,
             priority: Priority.high,
+            sound: RawResourceAndroidNotificationSound('notification_sound'),
           ),
         ),
       );
