@@ -7,11 +7,11 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <application
         android:label="EasyWay"
-        android:name="${applicationName}">
+        android:name="${applicationName}"
+        android:icon="@mipmap/ic_launcher">
     <meta-data
         android:name="com.google.firebase.messaging.default_notification_sound"
-        android:resource="@raw/notification_sound" />
-        android:icon="@mipmap/ic_launcher">
+        android:resource="@raw/notification_sound"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"
