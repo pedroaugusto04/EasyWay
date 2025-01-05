@@ -24,6 +24,7 @@ class _MapScreenState extends State<MapScreen> {
   bool isDriver = false;
   late Map<String, bool> mapRouteDriver = {};
   late bool isLoadFinished = false;
+  bool isCameraAutoMove = false;
 
   @override
   void initState() {
@@ -144,9 +145,10 @@ class _MapScreenState extends State<MapScreen> {
                   );
                 }
                 // renderiza o mapa com a nova rota
-                return mapRouteDriver[selectedRoute?.id] ?? false ? DriverRouteMapWidget(key: ValueKey(selectedRoute!), route: selectedRoute!)
+                return mapRouteDriver[selectedRoute?.id] ?? false ? DriverRouteMapWidget(key: ValueKey(selectedRoute!), route: selectedRoute!,
+                isCameraAutoMove: isCameraAutoMove)
                     :
-                UserRouteMapWidget(key: ValueKey(selectedRoute!), route: selectedRoute!);
+                UserRouteMapWidget(key: ValueKey(selectedRoute!), route: selectedRoute!, isCameraAutoMove: isCameraAutoMove);
               } else {
                 return const SizedBox();
               }
@@ -178,6 +180,30 @@ class _MapScreenState extends State<MapScreen> {
                   return const SizedBox();
                 }
               },
+            ),
+          ),
+          Positioned(
+            left: 16,
+            top: 50,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Câmera automática",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Switch(
+                  value: isCameraAutoMove,
+                  onChanged: (bool value) {
+                    setState(() {
+                      isCameraAutoMove = value;
+                    });
+                  },
+                ),
+              ],
             ),
           ),
           Positioned(

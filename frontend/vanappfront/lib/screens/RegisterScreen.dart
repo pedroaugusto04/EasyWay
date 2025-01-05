@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -59,8 +60,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         );
         setState(() {
           userLocation = position;
-          // + 0.03 na latitude, ajuste para o mapa ficar centralizado no marker
-          _mapController.move(LatLng(userLocation!.latitude + 0.03, userLocation!.longitude), 13);
+          _mapController.move(LatLng(userLocation!.latitude + (double.tryParse(dotenv.env['LATITUDE_ADJUSTMENT'] ?? '0') ?? 0.0),
+              userLocation!.longitude), 12);
         });
       } catch (e) {
         print('Erro ao obter localização: $e');
@@ -181,8 +182,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
           headingAccuracy: 0,
           accuracy: 0,
         );
-        // + 0.03 na latitude, ajuste para o mapa ficar centralizado no marker
-        _mapController.move(LatLng(location.latitude + 0.03,location.longitude), 13);
+        _mapController.move(LatLng(location.latitude + (double.tryParse(dotenv.env['LATITUDE_ADJUSTMENT'] ?? '0') ?? 0.0),
+            location.longitude), 12);
       });
 
     } catch (e) {
@@ -275,7 +276,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 interactionOptions: const InteractionOptions(
                                   flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
                                 ),
-                                initialZoom: 13.0,
+                                initialZoom: 12.0,
                               ),
                               children: [
                                 TileLayer(

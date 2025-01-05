@@ -50,7 +50,7 @@ class RouteLocationProvider extends ChangeNotifier {
     _webSocketService.connectDriverToRoute(routeId);
 
     _location.changeSettings(
-        accuracy: loc.LocationAccuracy.balanced,
+        accuracy: loc.LocationAccuracy.high,
         distanceFilter: 100 // atualiza de 100 em 100 metros
     );
 
@@ -92,7 +92,7 @@ class RouteLocationProvider extends ChangeNotifier {
     _webSocketService.connectDriverToRoute(routeId);
     _positionForegroundSubscription = Geolocator.getPositionStream(
       locationSettings: LocationSettings(
-        accuracy: LocationAccuracy.medium,
+        accuracy: LocationAccuracy.high,
         distanceFilter: 100, // atualiza de 100 em 100 metros
       ),
     ).listen((Position position) {

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import '../models/RouteModel.dart';
@@ -8,8 +10,9 @@ import '../services/WebSocketService.dart';
 
 class UserRouteMapWidget extends StatefulWidget {
   final RouteModel route;
+  bool isCameraAutoMove;
 
-  UserRouteMapWidget({super.key, required this.route});
+  UserRouteMapWidget({super.key, required this.route, required this.isCameraAutoMove});
 
   @override
   _UserRouteMapWidgetState createState() => _UserRouteMapWidgetState();
@@ -18,13 +21,26 @@ class UserRouteMapWidget extends StatefulWidget {
 class _UserRouteMapWidgetState extends State<UserRouteMapWidget> {
 
   late WebSocketService _webSocketService;
+  late MapController _mapController;
 
   @override
   void initState() {
     super.initState();
     _webSocketService = WebSocketService();
+    _mapController = MapController();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    _mapController.dispose();
+  }
+
+  void _moveCameraToPosition(Position position) {
+    // 12 -> zoom apos movimentar
+    _mapController.move(LatLng((position.latitude + (double.tryParse(dotenv.env['LATITUDE_ADJUSTMENT'] ?? '0') ?? 0.0)),
+        position.longitude),12);
+  }
 
   void _startTracking(BuildContext context) {
     final userLocationProvider = Provider.of<UserRouteLocationProvider>(context,listen: false);
@@ -39,15 +55,13 @@ class _UserRouteMapWidgetState extends State<UserRouteMapWidget> {
 
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final userLocationProvider = Provider.of<UserRouteLocationProvider>(context);
     final currentDriverPosition = userLocationProvider.currentDriverPosition;
-
+    if (currentDriverPosition != null && widget.isCameraAutoMove){
+      // ajusta a camera do mapa para centralizar no motorista
+      _moveCameraToPosition(currentDriverPosition);
+    }
     if (widget.route.passengers.isEmpty) {
       return Center(
         child: Text(
@@ -59,8 +73,9 @@ class _UserRouteMapWidgetState extends State<UserRouteMapWidget> {
 
     return Scaffold(
       body: FlutterMap(
+        mapController: _mapController,
         options: MapOptions(
-          minZoom: 11.0,
+          minZoom: 10.0,
           maxZoom: 17.0,
           initialCenter: LatLng(
             widget.route.passengers.isNotEmpty
@@ -72,7 +87,7 @@ class _UserRouteMapWidgetState extends State<UserRouteMapWidget> {
           ),
           interactionOptions: const InteractionOptions(
               flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag),
-          initialZoom: 13.0,
+          initialZoom: 12.0,
         ),
         children: [
           TileLayer(

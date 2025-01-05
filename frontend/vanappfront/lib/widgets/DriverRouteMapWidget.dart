@@ -6,27 +6,37 @@ import 'package:provider/provider.dart';
 import '../models/RouteModel.dart';
 import '../models/UserModel.dart';
 import '../providers/RouteLocationProvider.dart';
-import '../services/WebSocketService.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class DriverRouteMapWidget extends StatefulWidget {
   final RouteModel route;
+  bool isCameraAutoMove;
 
-  DriverRouteMapWidget({super.key, required this.route});
+  DriverRouteMapWidget({super.key, required this.route, required this.isCameraAutoMove});
 
   @override
   _DriverRouteMapWidgetState createState() => _DriverRouteMapWidgetState();
 }
 
 class _DriverRouteMapWidgetState extends State<DriverRouteMapWidget> {
+  late MapController _mapController;
 
   @override
   void initState() {
     super.initState();
+    _mapController = MapController();
   }
 
   @override
   void dispose() {
     super.dispose();
+    _mapController.dispose();
+  }
+
+  void _moveCameraToPosition(Position position) {
+    // 12 -> zoom apos movimentar
+    _mapController.move(LatLng((position.latitude + (double.tryParse(dotenv.env['LATITUDE_ADJUSTMENT'] ?? '0') ?? 0.0)),
+        position.longitude),12);
   }
 
   void _startTracking() async {
@@ -77,7 +87,10 @@ class _DriverRouteMapWidgetState extends State<DriverRouteMapWidget> {
   Widget build(BuildContext context) {
     final locationProvider = Provider.of<RouteLocationProvider>(context);
     final currentPosition = locationProvider.currentPosition;
-
+    if (currentPosition != null && widget.isCameraAutoMove){
+      // ajusta a camera do mapa para centralizar no motorista
+      _moveCameraToPosition(currentPosition);
+    }
     if (locationProvider.passengersToNotify.isEmpty && widget.route.passengers.isEmpty) {
       return Center(
         child: Text(
@@ -89,12 +102,13 @@ class _DriverRouteMapWidgetState extends State<DriverRouteMapWidget> {
 
     return Scaffold(
       body: FlutterMap(
+        mapController: _mapController,
         options: MapOptions(
-          minZoom: 11.0,
+          minZoom: 10.0,
           maxZoom: 17.0,
           initialCenter: LatLng(
             widget.route.passengers.isNotEmpty
-                ? widget.route.passengers[0].lat
+                ? widget.route.passengers[0].lat + (double.tryParse(dotenv.env['LATITUDE_ADJUSTMENT'] ?? '0') ?? 0.0)
                 : 0.0,
             widget.route.passengers.isNotEmpty
                 ? widget.route.passengers[0].lng
@@ -102,7 +116,7 @@ class _DriverRouteMapWidgetState extends State<DriverRouteMapWidget> {
           ),
           interactionOptions: const InteractionOptions(
               flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag),
-          initialZoom: 13.0,
+          initialZoom: 12.0,
         ),
         children: [
           TileLayer(

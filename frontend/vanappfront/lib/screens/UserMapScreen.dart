@@ -52,12 +52,12 @@ class _UserMapScreenState extends State<UserMapScreen> {
         children: [
           FlutterMap(
             options: MapOptions(
-              minZoom: 11.0,
+              minZoom: 10.0,
               maxZoom: 17.0,
               initialCenter: LatLng(widget.user.lat, widget.user.lng),
               interactionOptions: const InteractionOptions(
                   flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag),
-              initialZoom: 13.0,
+              initialZoom: 12.0,
             ),
             children: [
               TileLayer(
