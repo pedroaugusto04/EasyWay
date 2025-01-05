@@ -18,7 +18,8 @@ export class NotificationService {
         notification: {
           sound: "notification_sound", 
           defaultSound: false,
-          channelId:"notification_channel"
+          channelId:"notification_channel",
+          priority: "high"
         },
       },
       token: deviceToken,

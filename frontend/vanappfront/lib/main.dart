@@ -75,7 +75,7 @@ Future<void> main() async {
             'notification_channel',
             'Custom Notification',
             importance: Importance.max,
-            priority: Priority.high,
+            priority: Priority.max,
             sound: RawResourceAndroidNotificationSound('notification_sound'),
           ),
         ),
