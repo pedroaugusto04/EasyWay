@@ -9,7 +9,10 @@ export class NotificationController {
   public static async sendNotification(req: Request, res: Response) {
     try {
       const deviceToken = req.params.deviceToken;
-      await NotificationService.sendNotification(deviceToken);
+    
+      const {title,body} = req.body;
+
+      await NotificationService.sendNotification(deviceToken, title,body);
     
       res.send("Notificação enviada com sucesso!");
     } catch(error){
