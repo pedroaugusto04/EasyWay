@@ -8,11 +8,11 @@ admin.initializeApp({
 });
 
 export class NotificationService {
-  public static async sendNotification(deviceToken: string): Promise<void> {
+  public static async sendNotification(deviceToken: string, title?: string, body?: string): Promise<void> {
     const message: admin.messaging.Message = {
       notification: {
-        title: process.env.NOTIFICATION_MSG_TITLE || "",
-        body: process.env.NOTIFICATION_MSG_BODY || "",
+        title: title || process.env.NOTIFICATION_MSG_TITLE || "",
+        body: body || process.env.NOTIFICATION_MSG_BODY || "",
       },
       android: {
         notification: {
