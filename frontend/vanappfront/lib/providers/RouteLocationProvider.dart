@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/foundation.dart';
 import 'package:location/location.dart' as loc;
@@ -11,6 +13,7 @@ import '../services/WebSocketService.dart';
 
 class RouteLocationProvider extends ChangeNotifier {
   Position? _currentPosition;
+  StreamSubscription? _driverPositionSubscription;
   StreamSubscription<Position>? _positionForegroundSubscription;
   StreamSubscription<loc.LocationData>? _positionBackgroundSubscription;
   late loc.Location _location;
@@ -46,12 +49,14 @@ class RouteLocationProvider extends ChangeNotifier {
       }
     }
 
+    _webSocketService.connectDriverToRoute(routeId); // inicia a rota a partir do motorista
+
     _isTracking = true;
-    _webSocketService.connectDriverToRoute(routeId);
+    notifyListeners();
 
     _location.changeSettings(
         accuracy: loc.LocationAccuracy.high,
-        distanceFilter: 100 // atualiza de 100 em 100 metros
+        //distanceFilter: 100 // atualiza de 100 em 100 metros
     );
 
     // ativa para rodar em segundo plano
@@ -72,8 +77,49 @@ class RouteLocationProvider extends ChangeNotifier {
           headingAccuracy: 0,
           speed: 0,
           speedAccuracy: 0);
+      /* a posicao do motorista eh atualizada diretamente, nao
+      precisa esperar do web socket
+       */
       _currentPosition = position;
       onUpdatePosition(position);
+    });
+
+    _driverPositionSubscription = _webSocketService.channel!.stream.listen(
+          (message) {
+        print('Mensagem recebida pelo passageiro: $message');
+        _isTracking = true;
+        final data = jsonDecode(message);
+        // Verifica se há erro na resposta
+        if (data['error'] != null) {
+          stopTracking();
+          return;
+        }
+
+        notifyListeners(); // Atualiza a UI com a nova posição
+      },
+      onError: (error) {
+        print("Erro na conexão: $error");
+      },
+      onDone: () {
+        print("Conexão fechada");
+        stopTracking();
+        _tryReconnectWebSocket(routeId,context);
+      },
+    );
+  }
+
+
+  void _tryReconnectWebSocket(String routeId, BuildContext context, {int attempt = 1}) {
+    // tenta reconectar com intervalos progressivos
+    // a cada conexao falha, aumenta o tempo em 5 segundos
+    print("Tentando reconectar... (Tentativa $attempt)");
+    Future.delayed(Duration(seconds: attempt * 10), () async {
+      _webSocketService.connectDriverToRoute(routeId);
+      if (_isTracking) return;
+
+      startTracking(routeId,context);
+      // nao conseguiu conectar, tenta novamente conforme o intervalo
+      if (!_isTracking) _tryReconnectWebSocket(routeId,context,attempt: attempt + 1);
     });
   }
 
@@ -93,7 +139,7 @@ class RouteLocationProvider extends ChangeNotifier {
     _positionForegroundSubscription = Geolocator.getPositionStream(
       locationSettings: LocationSettings(
         accuracy: LocationAccuracy.high,
-        distanceFilter: 100, // atualiza de 100 em 100 metros
+        //distanceFilter: 100, // atualiza de 100 em 100 metros
       ),
     ).listen((Position position) {
       _currentPosition = position;
@@ -108,14 +154,15 @@ class RouteLocationProvider extends ChangeNotifier {
 
     // desativa o rastreamento caso esteja rodando em foreground
     _positionForegroundSubscription?.cancel();
-    // desativa o rastreamento caso esteja rodando em background
+    // desativa a recuperacao da localizacao caso esteja rodando em background
     _positionBackgroundSubscription?.cancel();
+    // desativa o rastreamento caso esteja rodando em background
+    _driverPositionSubscription?.cancel();
 
     _webSocketService.stopSendingMessages();
     _webSocketService.closeConnection();
     currentPosition = null;
     _isTracking = false;
-    passengersToNotify = [];
     notifyListeners(); // notifica para atualizar a UI
   }
 

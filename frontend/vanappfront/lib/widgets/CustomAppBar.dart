@@ -1,5 +1,8 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../main.dart';
+import '../providers/network/NetworkManagerProvider.dart';
 import '../services/LoginService.dart'; // Importe o LoginService
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -7,11 +10,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final networkProvider = Provider.of<NetworkManagerProvider>(context);
     return FutureBuilder<bool>(
       future: LoginService.isUserLoggedIn(), // Verifica se o usuário está logado
       builder: (context, snapshot) {
         // enquanto estiver carregando
-        if (snapshot.connectionState == ConnectionState.waiting) {
+        if (snapshot.connectionState == ConnectionState.waiting
+            || networkProvider.connectivityStatus == ConnectivityResult.none) {
           return AppBar(
             title: const Text('EasyWay'),
             actions: const [

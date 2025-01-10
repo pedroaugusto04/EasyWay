@@ -34,16 +34,35 @@ app.get('/ping', (req, res) => {
 const wss = new WebSocketServer({ server });
 
 wss.on('connection', (ws: WebSocket, req) => {
+  let isAlive = true;
   const urlParts = req.url?.split('/');
   const userType = urlParts ? urlParts[1] : null; // verifica se eh motorista ou passageiro
   const routeId = urlParts ? urlParts[2] : null;  // verifica o id da rota
 
   if (userType === 'driver' && routeId) {
+    const verifyWebSocketConnection = setInterval(() => {
+      if (!isAlive) {
+        ws.terminate();
+        clearInterval(verifyWebSocketConnection); 
+        return;
+      }
+      isAlive = false;
+      ws.ping(); 
+    },10000); // verifica a cada 10 segundos se a conexao esta ativa
 
     // se nao existir, ativa a rota
     if (!connections.has(routeId)) {
-      connections.set(routeId, []); 
+      connections.set(routeId, [ws]); 
     }
+
+    ws.on('pong', () => {
+      /* ocorre na resposta ao evento de ping
+      se nao ocorrer, o isAlive sera false, indicando que o usuario
+      foi desconectado e sua conexao devera ser fechada e iniciar uma tentativa de reconexao 
+      ( deve tentar reconectar )
+      */
+      isAlive = true;
+    });
 
     ws.on('message', (message: string) => {
       // envia para todos os passageiros
@@ -80,6 +99,7 @@ wss.on('connection', (ws: WebSocket, req) => {
 
 function sendMessageToPassengers(message: string, routeId: string) {
   const passengersWs = connections.get(routeId);
+
   if (!passengersWs || passengersWs.length === 0) return;
 
   connections.get(routeId)?.forEach(passengerWs => {
@@ -106,6 +126,7 @@ function sendMessageToPassengers(message: string, routeId: string) {
 function sendMessageTurnOffToPassengers(routeId: string) {
   // sinaliza para os passageiros que a rota nao esta mais em andamento
   const passengersWs = connections.get(routeId);
+
   if (!passengersWs || passengersWs.length === 0) return;
 
   connections.get(routeId)?.forEach(passengerWs => {

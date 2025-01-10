@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,8 @@ import 'package:vanappfront/widgets/CustomAppBar.dart';
 import 'firebase_options.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+import 'providers/network/NetworkManagerProvider.dart';
+
 Future<void> main() async {
   // carrega dotenv conforme o ambiente
   String envFile = '.env';
@@ -27,6 +30,7 @@ Future<void> main() async {
   await dotenv.load(fileName: envFile);
 
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -88,6 +92,7 @@ Future<void> main() async {
       providers: [
         ChangeNotifierProvider(create: (context) => RouteLocationProvider()),
         ChangeNotifierProvider(create: (context) => UserRouteLocationProvider()),
+        ChangeNotifierProvider(create: (context) => NetworkManagerProvider())
       ],
       child: const MyApp(),
     ),
@@ -101,7 +106,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    final networkProvider = Provider.of<NetworkManagerProvider>(context);
+    networkProvider.startMonitoring();
+    return  MaterialApp(
       title: 'EasyWay',
       theme: ThemeData(
         colorScheme: const ColorScheme.light(
@@ -119,7 +126,8 @@ class MyApp extends StatelessWidget {
       home: FutureBuilder<bool>(
         future: LoginService.isUserLoggedIn(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          if (snapshot.connectionState == ConnectionState.waiting
+          || networkProvider.connectivityStatus == ConnectivityResult.none) {
             return Scaffold(
               appBar: CustomAppBar(),
               body: const Center(child: CircularProgressIndicator()),

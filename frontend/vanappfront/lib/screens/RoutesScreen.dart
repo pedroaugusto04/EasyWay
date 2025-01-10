@@ -1,7 +1,10 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vanappfront/screens/RouteDetailsScreen.dart';
 import 'package:vanappfront/services/RoutesService.dart';
 import '../models/RouteModel.dart';
+import '../providers/network/NetworkManagerProvider.dart';
 import '../widgets/CustomAppBar.dart';
 import 'CreateRouteScreen.dart';
 
@@ -58,6 +61,7 @@ class _RoutesScreenState extends State<RoutesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final networkManager = Provider.of<NetworkManagerProvider>(context);
     return Scaffold(
       appBar: CustomAppBar(),
       body: Stack(
@@ -65,7 +69,8 @@ class _RoutesScreenState extends State<RoutesScreen> {
           FutureBuilder<List<RouteModel>?>(
             future: _routesFuture,
             builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
+              if (snapshot.connectionState == ConnectionState.waiting
+                  || networkManager.connectivityStatus == ConnectivityResult.none) {
                 return const Center(child: CircularProgressIndicator());
               } else if (snapshot.hasError) {
                 return Center(child: Text('Erro: ${snapshot.error}'));

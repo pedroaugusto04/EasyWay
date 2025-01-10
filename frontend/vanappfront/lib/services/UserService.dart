@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
-import '../Exceptions/AuthenticationException.dart';
+import '../exceptions/AuthenticationException.dart';
 import '../models/RegisterUserModel.dart';
 import '../models/UserModel.dart';
 import 'LoginService.dart';

@@ -1,6 +1,9 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vanappfront/services/UserService.dart';
 import '../models/UserModel.dart';
+import '../providers/network/NetworkManagerProvider.dart';
 import '../widgets/CustomAppBar.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -25,12 +28,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final networkProvider = Provider.of<NetworkManagerProvider>(context);
     return Scaffold(
       appBar: CustomAppBar(),
       body: FutureBuilder<UserModel?>(
         future: _userFuture,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          if (snapshot.connectionState == ConnectionState.waiting
+              || networkProvider.connectivityStatus == ConnectivityResult.none) {
             return const Center(
               child: CircularProgressIndicator(),
             );

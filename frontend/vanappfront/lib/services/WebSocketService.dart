@@ -8,11 +8,11 @@ class WebSocketService {
   WebSocketChannel? channel;
   Timer? _timer;
 
-  void connectDriverToRoute(String routeId) {
-    final apiUrlWebSocket = dotenv.env['API_URL_WEB_SOCKET'];
-    final String url = 'ws://$apiUrlWebSocket/driver/$routeId';
+  void connectDriverToRoute(String routeId)  {
+      final apiUrlWebSocket = dotenv.env['API_URL_WEB_SOCKET'];
+      final String url = 'ws://$apiUrlWebSocket/driver/$routeId';
 
-    channel = WebSocketChannel.connect(Uri.parse(url));
+      channel = WebSocketChannel.connect(Uri.parse(url));
   }
 
   void connectToRoute(String routeId) {
