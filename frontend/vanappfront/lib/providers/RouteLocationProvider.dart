@@ -56,7 +56,7 @@ class RouteLocationProvider extends ChangeNotifier {
 
     _location.changeSettings(
         accuracy: loc.LocationAccuracy.high,
-        //distanceFilter: 100 // atualiza de 100 em 100 metros
+        distanceFilter: 100 // atualiza de 100 em 100 metros
     );
 
     // ativa para rodar em segundo plano
@@ -139,7 +139,7 @@ class RouteLocationProvider extends ChangeNotifier {
     _positionForegroundSubscription = Geolocator.getPositionStream(
       locationSettings: LocationSettings(
         accuracy: LocationAccuracy.high,
-        //distanceFilter: 100, // atualiza de 100 em 100 metros
+        distanceFilter: 100, // atualiza de 100 em 100 metros
       ),
     ).listen((Position position) {
       _currentPosition = position;
