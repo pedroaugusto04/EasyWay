@@ -106,11 +106,6 @@ class _DriverRouteMapWidgetState extends State<DriverRouteMapWidget> {
         options: MapOptions(
           minZoom: 10.0,
           maxZoom: 17.0,
-          onPositionChanged: (position,hasGesture){
-            if (hasGesture) {
-              //_updateMarkerSize(position.zoom);
-            }
-          },
           initialCenter: LatLng(
             widget.route.passengers.isNotEmpty
                 ? widget.route.passengers[0].lat + (double.tryParse(dotenv.env['LATITUDE_ADJUSTMENT'] ?? '0') ?? 0.0)
@@ -222,7 +217,6 @@ class _DriverRouteMapWidgetState extends State<DriverRouteMapWidget> {
                 point: LatLng(passenger.lat, passenger.lng),
                 width: 500,
                 height: 500,
-                rotate: false,
                 child: Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -307,45 +301,47 @@ class _DriverRouteMapWidgetState extends State<DriverRouteMapWidget> {
                   point: LatLng(currentPosition.latitude, currentPosition.longitude),
                   width: 500,
                   height: 500,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 45,
-                        height: 45,
-                        decoration: BoxDecoration(
-                          color: Colors.teal,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 2),
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 45,
+                          height: 45,
+                          decoration: BoxDecoration(
+                            color: Colors.teal,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 2),
+                          ),
+                          child: Icon(
+                            Icons.location_on,
+                            size: 30,
+                            color: Colors.white,
+                          ),
                         ),
-                        child: Icon(
-                          Icons.location_on,
-                          size: 30,
+                        SizedBox(height: 6),
+                        Material(
+                          elevation: 4,
+                          borderRadius: BorderRadius.circular(8),
                           color: Colors.white,
-                        ),
-                      ),
-                      SizedBox(height: 6),
-                      Material(
-                        elevation: 4,
-                        borderRadius: BorderRadius.circular(8),
-                        color: Colors.white,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.vertical,
-                            child: Text(
-                              "Você está aqui",
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.vertical,
+                              child: Text(
+                                "Você está aqui",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black,
+                                ),
+                                softWrap: true,
                               ),
-                              softWrap: true,
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ],
