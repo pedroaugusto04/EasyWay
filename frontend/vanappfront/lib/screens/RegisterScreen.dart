@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -60,7 +59,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         );
         setState(() {
           userLocation = position;
-          _mapController.move(LatLng(userLocation!.latitude + (double.tryParse(dotenv.env['LATITUDE_ADJUSTMENT'] ?? '0') ?? 0.0),
+          _mapController.move(LatLng(userLocation!.latitude,
               userLocation!.longitude), 12);
         });
       } catch (e) {
@@ -182,7 +181,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           headingAccuracy: 0,
           accuracy: 0,
         );
-        _mapController.move(LatLng(location.latitude + (double.tryParse(dotenv.env['LATITUDE_ADJUSTMENT'] ?? '0') ?? 0.0),
+        _mapController.move(LatLng(location.latitude,
             location.longitude), 12);
       });
 

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
@@ -38,7 +37,7 @@ class _UserRouteMapWidgetState extends State<UserRouteMapWidget> {
 
   void _moveCameraToPosition(Position position) {
     // 12 -> zoom apos movimentar
-    _mapController.move(LatLng((position.latitude + (double.tryParse(dotenv.env['LATITUDE_ADJUSTMENT'] ?? '0') ?? 0.0)),
+    _mapController.move(LatLng((position.latitude  ?? 0.0),
         position.longitude),12);
   }
 

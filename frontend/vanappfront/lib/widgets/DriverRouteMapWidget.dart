@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import '../models/RouteModel.dart';
 import '../models/UserModel.dart';
 import '../providers/RouteLocationProvider.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class DriverRouteMapWidget extends StatefulWidget {
   final RouteModel route;
@@ -35,7 +34,7 @@ class _DriverRouteMapWidgetState extends State<DriverRouteMapWidget> {
 
   void _moveCameraToPosition(Position position) {
     // 12 -> zoom apos movimentar
-    _mapController.move(LatLng((position.latitude + (double.tryParse(dotenv.env['LATITUDE_ADJUSTMENT'] ?? '0') ?? 0.0)),
+    _mapController.move(LatLng((position.latitude ?? 0.0),
         position.longitude),12);
   }
 
@@ -108,7 +107,7 @@ class _DriverRouteMapWidgetState extends State<DriverRouteMapWidget> {
           maxZoom: 17.0,
           initialCenter: LatLng(
             widget.route.passengers.isNotEmpty
-                ? widget.route.passengers[0].lat + (double.tryParse(dotenv.env['LATITUDE_ADJUSTMENT'] ?? '0') ?? 0.0)
+                ? widget.route.passengers[0].lat
                 : 0.0,
             widget.route.passengers.isNotEmpty
                 ? widget.route.passengers[0].lng
