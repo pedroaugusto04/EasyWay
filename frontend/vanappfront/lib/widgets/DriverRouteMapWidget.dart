@@ -106,6 +106,11 @@ class _DriverRouteMapWidgetState extends State<DriverRouteMapWidget> {
         options: MapOptions(
           minZoom: 10.0,
           maxZoom: 17.0,
+          onPositionChanged: (position,hasGesture){
+            if (hasGesture) {
+              //_updateMarkerSize(position.zoom);
+            }
+          },
           initialCenter: LatLng(
             widget.route.passengers.isNotEmpty
                 ? widget.route.passengers[0].lat + (double.tryParse(dotenv.env['LATITUDE_ADJUSTMENT'] ?? '0') ?? 0.0)
@@ -136,76 +141,78 @@ class _DriverRouteMapWidgetState extends State<DriverRouteMapWidget> {
                 point: LatLng(passenger.lat, passenger.lng),
                 width: 500,
                 height: 500,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          width: 45,
-                          height: 45,
-                          decoration: BoxDecoration(
-                            color: Colors.blueAccent,
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 2),
-                          ),
-                          child: Icon(
-                            Icons.location_on,
-                            size: 30,
-                            color: Colors.white,
-                          ),
-                        ),
-                        IconButton( // notificações do passageiro
-                          icon: Icon(
-                            passenger.notificate
-                                ? Icons.notifications_active
-                                : Icons.notifications_off,
-                            color: passenger.notificate
-                                ? Colors.redAccent
-                                : Colors.grey,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              passenger.notificate = !passenger.notificate;
-                            });
-
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  passenger.notificate
-                                      ? 'Notificações ativadas para ${passenger.name}.'
-                                      : 'Notificações desativadas para ${passenger.name}.',
-                                ),
-                                duration: Duration(seconds: 1),
-                              ),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 6),
-                    Material(
-                      elevation: 4,
-                      borderRadius: BorderRadius.circular(8),
-                      color: Colors.white,
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.vertical,
-                          child: Text(
-                            passenger.name,
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black,
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 45,
+                            height: 45,
+                            decoration: BoxDecoration(
+                              color: Colors.blueAccent,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.white, width: 2),
                             ),
-                            softWrap: true,
+                            child: Icon(
+                              Icons.location_on,
+                              size: 30,
+                              color: Colors.white,
+                            ),
+                          ),
+                          IconButton( // notificações do passageiro
+                            icon: Icon(
+                              passenger.notificate
+                                  ? Icons.notifications_active
+                                  : Icons.notifications_off,
+                              color: passenger.notificate
+                                  ? Colors.redAccent
+                                  : Colors.grey,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                passenger.notificate = !passenger.notificate;
+                              });
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    passenger.notificate
+                                        ? 'Notificações ativadas para ${passenger.name}.'
+                                        : 'Notificações desativadas para ${passenger.name}.',
+                                  ),
+                                  duration: Duration(seconds: 1),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 6),
+                      Material(
+                        elevation: 4,
+                        borderRadius: BorderRadius.circular(8),
+                        color: Colors.white,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.vertical,
+                            child: Text(
+                              passenger.name,
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
+                              ),
+                              softWrap: true,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               );
             }).toList()
@@ -215,76 +222,79 @@ class _DriverRouteMapWidgetState extends State<DriverRouteMapWidget> {
                 point: LatLng(passenger.lat, passenger.lng),
                 width: 500,
                 height: 500,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          width: 45,
-                          height: 45,
-                          decoration: BoxDecoration(
-                            color: Colors.blueAccent,
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 2),
-                          ),
-                          child: Icon(
-                            Icons.location_on,
-                            size: 30,
-                            color: Colors.white,
-                          ),
-                        ),
-                        IconButton( // notificações do passageiro
-                          icon: Icon(
-                            passenger.notificate
-                                ? Icons.notifications_active
-                                : Icons.notifications_off,
-                            color: passenger.notificate
-                                ? Colors.redAccent
-                                : Colors.grey,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              passenger.notificate = !passenger.notificate;
-                            });
-
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  passenger.notificate
-                                      ? 'Notificações ativadas para ${passenger.name}.'
-                                      : 'Notificações desativadas para ${passenger.name}.',
-                                ),
-                                duration: Duration(seconds: 1),
-                              ),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 6),
-                    Material(
-                      elevation: 4,
-                      borderRadius: BorderRadius.circular(8),
-                      color: Colors.white,
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.vertical,
-                          child: Text(
-                            passenger.name,
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black,
+                rotate: false,
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 45,
+                            height: 45,
+                            decoration: BoxDecoration(
+                              color: Colors.blueAccent,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.white, width: 2),
                             ),
-                            softWrap: true,
+                            child: Icon(
+                              Icons.location_on,
+                              size: 30,
+                              color: Colors.white,
+                            ),
+                          ),
+                          IconButton( // notificações do passageiro
+                            icon: Icon(
+                              passenger.notificate
+                                  ? Icons.notifications_active
+                                  : Icons.notifications_off,
+                              color: passenger.notificate
+                                  ? Colors.redAccent
+                                  : Colors.grey,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                passenger.notificate = !passenger.notificate;
+                              });
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    passenger.notificate
+                                        ? 'Notificações ativadas para ${passenger.name}.'
+                                        : 'Notificações desativadas para ${passenger.name}.',
+                                  ),
+                                  duration: Duration(seconds: 1),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 6),
+                      Material(
+                        elevation: 4,
+                        borderRadius: BorderRadius.circular(8),
+                        color: Colors.white,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.vertical,
+                            child: Text(
+                              passenger.name,
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
+                              ),
+                              softWrap: true,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               );
             }).toList()
