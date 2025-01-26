@@ -1,12 +1,9 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:provider/provider.dart';
-
 import '../models/UserModel.dart';
-import '../providers/network/NetworkManagerProvider.dart';
 
 class UserMapScreen extends StatefulWidget {
   final UserModel user;
@@ -47,13 +44,11 @@ class _UserMapScreenState extends State<UserMapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final networkManagerProvider = Provider.of<NetworkManagerProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('Endereço de: ${widget.user.name}'),
       ),
-      body: networkManagerProvider.connectivityStatus == ConnectivityResult.none ?
-      Center(child: Text("Sem conexão com a internet")) : Stack(
+      body: Stack(
         children: [
           FlutterMap(
             options: MapOptions(

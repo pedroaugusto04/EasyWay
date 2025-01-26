@@ -1,4 +1,3 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -13,8 +12,6 @@ import 'package:vanappfront/services/NavigationService.dart';
 import 'package:vanappfront/widgets/CustomAppBar.dart';
 import 'firebase_options.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
-import 'providers/network/NetworkManagerProvider.dart';
 
 Future<void> main() async {
   // carrega dotenv conforme o ambiente
@@ -92,7 +89,6 @@ Future<void> main() async {
       providers: [
         ChangeNotifierProvider(create: (context) => RouteLocationProvider()),
         ChangeNotifierProvider(create: (context) => UserRouteLocationProvider()),
-        ChangeNotifierProvider(create: (context) => NetworkManagerProvider())
       ],
       child: const MyApp(),
     ),
@@ -106,8 +102,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final networkProvider = Provider.of<NetworkManagerProvider>(context);
-    networkProvider.startMonitoring();
     return  MaterialApp(
       title: 'EasyWay',
       theme: ThemeData(
@@ -126,14 +120,6 @@ class MyApp extends StatelessWidget {
       home: FutureBuilder<bool>(
         future: LoginService.isUserLoggedIn(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting
-          || networkProvider.connectivityStatus == ConnectivityResult.none) {
-            return Scaffold(
-              appBar: CustomAppBar(),
-              body: const Center(child: CircularProgressIndicator()),
-            );
-          }
-
           if (snapshot.hasError || !snapshot.hasData || snapshot.data == false) {
             // caso nao esteja logado
             return const LoginScreen();

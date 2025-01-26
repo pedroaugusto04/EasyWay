@@ -1,4 +1,3 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:provider/provider.dart';
@@ -6,7 +5,6 @@ import 'package:vanappfront/services/UserService.dart';
 import 'package:vanappfront/widgets/CustomAppBar.dart';
 import '../models/RouteModel.dart';
 import '../providers/RouteLocationProvider.dart';
-import '../providers/network/NetworkManagerProvider.dart';
 import '../services/RoutesService.dart';
 import '../widgets/DriverRouteMapWidget.dart';
 import '../widgets/UserRouteMapWidget.dart';
@@ -75,7 +73,6 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     final locationProvider = Provider.of<RouteLocationProvider>(context);
-    final networkProvider = Provider.of<NetworkManagerProvider>(context);
     return Scaffold(
       appBar: CustomAppBar(),
       body: Stack(
@@ -83,10 +80,7 @@ class _MapScreenState extends State<MapScreen> {
           FutureBuilder<List<RouteModel>>(
             future: _routesFuture,
             builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting || !isLoadFinished
-              || networkProvider.connectivityStatus == ConnectivityResult.none) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
+              if (snapshot.hasError) {
                 return const Center(child: Icon(Icons.error, color: Colors.red));
               } else if (snapshot.hasData) {
                 final routes = snapshot.data!;
@@ -164,9 +158,7 @@ class _MapScreenState extends State<MapScreen> {
             child: FutureBuilder<List<RouteModel>>(
               future: _routesFuture,
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const SizedBox();
-                } else if (snapshot.hasError) {
+                 if (snapshot.hasError) {
                   return const SizedBox();
                 } else if (snapshot.hasData) {
                   final routes = snapshot.data!;
@@ -216,9 +208,7 @@ class _MapScreenState extends State<MapScreen> {
             child: FutureBuilder<List<RouteModel>>(
               future: _routesFuture,
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
-                } else if (snapshot.hasError) {
+                if (snapshot.hasError) {
                   return const Icon(Icons.error, color: Colors.red);
                 } else if (snapshot.hasData) {
                   final routes = snapshot.data!;
