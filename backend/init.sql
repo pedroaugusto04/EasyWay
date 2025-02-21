@@ -12,7 +12,7 @@ CREATE TABLE Users (
 -- Tabela de Motoristas
 CREATE TABLE Drivers (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(), 
-    user_id UUID REFERENCES Users(id) ON DELETE CASCADE,  -- Relacionado ao UUID do usuário
+    user_id UUID REFERENCES Users(id) ON DELETE CASCADE,   -- Relacionado ao UUID do usuário
     is_active BOOLEAN DEFAULT FALSE,                      -- Status do motorista (ativo/inativo)
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
