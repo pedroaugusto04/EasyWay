@@ -19,7 +19,7 @@ The system tracks the driver’s position in real time and automatically notifie
 
 ##  Real-Time Driver Tracking
 
-Passengers and drivers can track the driver's location in real time using WebSockets.
+Passengers can track the driver's location in real time using WebSockets.
 
 Drivers can choose whether or not to notify specific passengers along the route.
 
