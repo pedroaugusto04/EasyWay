@@ -120,7 +120,7 @@ class _DriverRouteMapWidgetState extends State<DriverRouteMapWidget> {
         children: [
           TileLayer(
             urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-            userAgentPackageName: 'com.example.app',
+            userAgentPackageName: 'com.vanapp',
           ),
           /* verifica primeiro se a rota esta em andamento
           caso esteja, devem ser exibidos os passageiros com as caracteristicas da rota em

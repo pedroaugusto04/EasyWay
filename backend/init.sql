@@ -83,17 +83,3 @@ BEGIN
     WHERE user_id = p_user_id;  
 END;
 $$;
-
-
-INSERT INTO Users (name, email, password, is_driver, device_token)
-VALUES (
-    'usuario', 
-    'a', 
-    '$2b$10$1pXa3B61XKUecujeyYEck.V3VdMVgiF25vnc.enj0W1nBcBz53hsi', 
-    FALSE, 
-    'dHFxTesPRHaapAEs9muonB:APA91bEvpatq9Bz7aFzpIbrFuF7RgfNPo7IbUzOS89wDce90lgjKIJfnxwSFvRTCwPoP2W9kVEkkSfMT2kR-iveLd_VigxYxsTj8vkHO5eEimt5QCLIepNU'
-);
--- senha 123
-
-
-

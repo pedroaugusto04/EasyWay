@@ -12,6 +12,8 @@ export class UserController {
           const {user} = req.body;
 
           user.password = await hashPassword(user.password);
+
+          console.log(user.password);
           
           await UserService.createUser(user);
           
