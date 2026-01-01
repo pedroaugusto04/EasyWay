@@ -28,3 +28,12 @@ When enabled, passengers receive a **push notification** once the driver reaches
 <p align="center">
   <img src="https://github.com/user-attachments/assets/582d2a9a-132c-4f65-b2c3-f42a1129403c" width="300" />
 </p>
+
+## 📝 How To Use
+
+1. Download the latest APK from the [Releases](https://github.com/pedroaugusto04/EasyWay/releases/tag/1.0) section on GitHub.  
+2. Install the APK on your Android device.  
+3. By default, you will start logged in as a passenger.
+4. To become a driver, request permission by sending an email to **pedroaugustoaduarte@gmail.com**.  
+5. Once approved as a driver, you can create routes and notify registered passengers in real time.
+
