@@ -23,7 +23,7 @@ Passengers can track the driver's location in real time using WebSockets.
 
 Drivers can choose whether or not to notify specific passengers along the route.
 
-When enabled, passengers receive a **push notification** once the driver reaches a predefined distance
+When enabled, passengers receive a **push notification** once the driver reaches a predefined distance.
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/582d2a9a-132c-4f65-b2c3-f42a1129403c" width="300" />
